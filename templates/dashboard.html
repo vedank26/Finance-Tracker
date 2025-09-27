@@ -1,0 +1,350 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="space-y-8">
+    <!-- Welcome Section -->
+    <div class="glass-effect rounded-2xl p-6 shadow-lg">
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">Welcome back, {{ current_user.username }}! 👋</h1>
+        <p class="text-gray-600">Here's your financial overview for today</p>
+    </div>
+
+<!-- Sample Data Generator Button -->
+<div class="glass-effect rounded-2xl p-6 shadow-lg bg-blue-50 border border-blue-200">
+    <div class="flex justify-between items-center">
+        <div>
+            <h2 class="text-xl font-bold text-gray-800 mb-2">No data yet? Generate sample data!</h2>
+            <p class="text-gray-600">Click the button below to populate your dashboard with sample financial data.</p>
+        </div>
+        <a href="{{ url_for('generate_sample_data') }}" 
+           class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
+            Generate Sample Data
+        </a>
+    </div>
+</div>
+
+<!-- Price Update Section -->
+<div class="glass-effect rounded-2xl p-6 shadow-lg mb-8">
+    <div class="flex justify-between items-center">
+        <div>
+            <h3 class="text-xl font-bold text-gray-800">Live Portfolio Prices</h3>
+            <p class="text-gray-600">Get current market prices for your investments</p>
+        </div>
+        <a href="{{ url_for('update_prices_route') }}" 
+           class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
+            Update Prices Now
+        </a>
+    </div>
+    <p class="text-sm text-gray-500 mt-2">Last updated: {{ get_last_price_update() }}</p>
+</div>
+
+    <!-- Key Metrics Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="glass-effect rounded-xl p-6 shadow-lg hover:scale-105 transition-transform duration-200">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-600">Monthly Cash Flow</p>
+                    <p class="text-2xl font-bold {% if metrics.net_cash_flow >= 0 %}text-green-600{% else %}text-red-600{% endif %}">
+                        ₹{{ "{:,.2f}".format(metrics.net_cash_flow) }}
+                    </p>
+                    <p class="text-sm text-gray-500 mt-1">
+                        {% if metrics.net_cash_flow >= 0 %}↑ Positive{% else %}↓ Negative{% endif %}
+                    </p>
+                </div>
+                <i class="fas fa-money-bill-wave text-3xl text-blue-500"></i>
+            </div>
+        </div>
+
+        <div class="glass-effect rounded-xl p-6 shadow-lg hover:scale-105 transition-transform duration-200">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-600">Savings Rate</p>
+                    <p class="text-2xl font-bold {% if metrics.savings_rate >= 20 %}text-green-600{% elif metrics.savings_rate >= 10 %}text-yellow-600{% else %}text-red-600{% endif %}">
+                        {{ "%.1f"|format(metrics.savings_rate) }}%
+                    </p>
+                    <p class="text-sm text-gray-500 mt-1">
+                        {% if metrics.savings_rate >= 20 %}Excellent{% elif metrics.savings_rate >= 10 %}Good{% else %}Needs improvement{% endif %}
+                    </p>
+                </div>
+                <i class="fas fa-piggy-bank text-3xl text-green-500"></i>
+            </div>
+        </div>
+
+        <div class="glass-effect rounded-xl p-6 shadow-lg hover:scale-105 transition-transform duration-200">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-600">Net Worth</p>
+                    <p class="text-2xl font-bold text-purple-600">₹{{ "{:,.2f}".format(metrics.current_net_worth) }}</p>
+                    <p class="text-sm text-gray-500 mt-1">Total Assets</p>
+                </div>
+                <i class="fas fa-chart-line text-3xl text-purple-500"></i>
+            </div>
+        </div>
+
+        <div class="glass-effect rounded-xl p-6 shadow-lg hover:scale-105 transition-transform duration-200">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-600">Portfolio Value</p>
+                    <p class="text-2xl font-bold {% if metrics.total_gain_loss >= 0 %}text-green-600{% else %}text-red-600{% endif %}">
+                        ₹{{ "{:,.2f}".format(metrics.portfolio_value) }}
+                    </p>
+                    <p class="text-sm {% if metrics.total_gain_loss >= 0 %}text-green-500{% else %}text-red-500{% endif %}">
+                        {% if metrics.total_gain_loss >= 0 %}↑{% else %}↓{% endif %}
+                        ₹{{ "{:,.2f}".format(metrics.total_gain_loss|abs) }}
+                    </p>
+                </div>
+                <i class="fas fa-chart-pie text-3xl text-orange-500"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- File Upload Section -->
+    <div class="glass-effect rounded-2xl p-6 shadow-lg">
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">Upload Financial Data</h2>
+        <div class="grid md:grid-cols-3 gap-4">
+            <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-blue-400 transition-colors">
+                <i class="fas fa-file-csv text-3xl text-blue-500 mb-2"></i>
+                <h3 class="font-semibold mb-2">Transactions CSV</h3>
+                <p class="text-sm text-gray-600 mb-3">date, description, amount, category</p>
+                <input type="file" accept=".csv" onchange="handleFileUpload('transactions', this)" 
+                       class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+            </div>
+
+            <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-green-400 transition-colors">
+                <i class="fas fa-balance-scale text-3xl text-green-500 mb-2"></i>
+                <h3 class="font-semibold mb-2">Net Worth CSV</h3>
+                <p class="text-sm text-gray-600 mb-3">date, assets, liabilities</p>
+                <input type="file" accept=".csv" onchange="handleFileUpload('net_worth', this)" 
+                       class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100">
+            </div>
+
+            <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-purple-400 transition-colors">
+                <i class="fas fa-chart-line text-3xl text-purple-500 mb-2"></i>
+                <h3 class="font-semibold mb-2">Portfolio CSV</h3>
+                <p class="text-sm text-gray-600 mb-3">symbol, shares, price</p>
+                <input type="file" accept=".csv" onchange="handleFileUpload('portfolio', this)" 
+                       class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100">
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="grid lg:grid-cols-2 gap-8">
+        {% if cash_flow_chart %}
+        <div class="glass-effect rounded-2xl p-6 shadow-lg">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-800">Monthly Cash Flow</h3>
+                <div class="flex space-x-2">
+                    <button onclick="toggleChartType('cash-flow-chart', 'bar')" class="px-3 py-1 bg-blue-100 text-blue-700 rounded-lg text-sm">Bar</button>
+                    <button onclick="toggleChartType('cash-flow-chart', 'line')" class="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg text-sm">Line</button>
+                </div>
+            </div>
+            <div id="cash-flow-chart" class="h-80"></div>
+        </div>
+        {% endif %}
+
+        {% if net_worth_chart %}
+        <div class="glass-effect rounded-2xl p-6 shadow-lg">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-800">Net Worth Tracking</h3>
+                <div class="flex space-x-2">
+                    <button onclick="toggleChartType('net-worth-chart', 'line')" class="px-3 py-1 bg-blue-100 text-blue-700 rounded-lg text-sm">Line</button>
+                    <button onclick="toggleChartType('net-worth-chart', 'area')" class="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg text-sm">Area</button>
+                </div>
+            </div>
+            <div id="net-worth-chart" class="h-80"></div>
+        </div>
+        {% endif %}
+    </div>
+
+    {% if portfolio_chart %}
+    <div class="glass-effect rounded-2xl p-6 shadow-lg">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold text-gray-800">Portfolio Allocation</h3>
+            <div class="flex space-x-2">
+                <button onclick="toggleChartType('portfolio-chart', 'pie')" class="px-3 py-1 bg-blue-100 text-blue-700 rounded-lg text-sm">Pie</button>
+                <button onclick="toggleChartType('portfolio-chart', 'bar')" class="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg text-sm">Bar</button>
+            </div>
+        </div>
+        <div id="portfolio-chart" class="h-96"></div>
+    </div>
+    {% endif %}
+
+    <!-- Top Categories & Recent Transactions -->
+    <div class="grid lg:grid-cols-2 gap-8">
+        {% if metrics.top_categories %}
+        <div class="glass-effect rounded-2xl p-6 shadow-lg">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">Top Spending Categories</h3>
+            <div class="space-y-4">
+                {% for category, amount in metrics.top_categories %}
+                <div class="flex items-center justify-between p-3 bg-gradient-to-r from-gray-50 to-white rounded-lg border">
+                    <div class="flex items-center">
+                        <div class="w-3 h-3 rounded-full bg-red-500 mr-3"></div>
+                        <span class="font-medium text-gray-700">{{ category }}</span>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-red-600 font-semibold block">₹{{ "{:,.2f}".format(amount) }}</span>
+                        <span class="text-xs text-gray-500">{{ "%.1f"|format((amount/metrics.total_expenses)*100) }}% of total</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if recent_transactions %}
+        <div class="glass-effect rounded-2xl p-6 shadow-lg">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">Recent Transactions</h3>
+            <div class="space-y-3 max-h-80 overflow-y-auto">
+                {% for transaction in recent_transactions %}
+                <div class="flex items-center justify-between p-3 bg-gradient-to-r from-gray-50 to-white rounded-lg border">
+                    <div>
+                        <span class="font-medium text-gray-700 block">{{ transaction.description }}</span>
+                        <span class="text-xs text-gray-500">{{ transaction.date }} • {{ transaction.category }}</span>
+                    </div>
+                    <span class="font-semibold {% if transaction.type == 'income' %}text-green-600{% else %}text-red-600{% endif %}">
+                        {% if transaction.type == 'income' %}+{% else %}-{% endif %}₹{{ "{:,.2f}".format(transaction.amount) }}
+                    </span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Plotly.js CDN -->
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+<script>
+// Chart configuration
+let chartConfigs = {
+    'cash-flow-chart': { data: {{ cash_flow_chart | safe }}, currentType: 'bar' },
+    'net-worth-chart': { data: {{ net_worth_chart | safe }}, currentType: 'line' },
+    'portfolio-chart': { data: {{ portfolio_chart | safe }}, currentType: 'pie' }
+};
+
+// Toggle chart types
+function toggleChartType(chartId, type) {
+    const config = chartConfigs[chartId];
+    if (!config) return;
+
+    config.currentType = type;
+    const data = JSON.parse(JSON.stringify(config.data)); // Deep copy
+    
+    // Modify trace type based on selection
+    if (chartId === 'portfolio-chart') {
+        if (type === 'bar') {
+            data[0].type = 'bar';
+            data[0].marker = { color: data[0].marker.colors };
+        } else {
+            data[0].type = 'pie';
+        }
+    } else {
+        data.forEach(trace => {
+            trace.type = type;
+            if (type === 'area') {
+                trace.fill = 'tozeroy';
+            } else {
+                trace.fill = null;
+            }
+        });
+    }
+
+    Plotly.react(chartId, data, { 
+        ...getLayoutOptions(chartId, type),
+        hoverlabel: { bgcolor: 'white', font: { color: 'black' } }
+    });
+}
+
+// Enhanced layout options
+function getLayoutOptions(chartId, type) {
+    const baseLayout = {
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(0,0,0,0)',
+        font: { color: '#374151' },
+        margin: { t: 30, r: 30, b: 50, l: 50 },
+        xaxis: { gridcolor: 'rgba(0,0,0,0.1)' },
+        yaxis: { gridcolor: 'rgba(0,0,0,0.1)' },
+        showlegend: chartId === 'portfolio-chart' && type === 'pie'
+    };
+
+    if (chartId === 'portfolio-chart' && type === 'bar') {
+        baseLayout.xaxis = { ...baseLayout.xaxis, tickangle: -45 };
+    }
+
+    return baseLayout;
+}
+
+// Initialize charts
+document.addEventListener('DOMContentLoaded', function() {
+    {% if cash_flow_chart %}
+    Plotly.newPlot('cash-flow-chart', chartConfigs['cash-flow-chart'].data, 
+        getLayoutOptions('cash-flow-chart', 'bar'));
+    {% endif %}
+
+    {% if net_worth_chart %}
+    Plotly.newPlot('net-worth-chart', chartConfigs['net-worth-chart'].data, 
+        getLayoutOptions('net-worth-chart', 'line'));
+    {% endif %}
+
+    {% if portfolio_chart %}
+    Plotly.newPlot('portfolio-chart', chartConfigs['portfolio-chart'].data, 
+        getLayoutOptions('portfolio-chart', 'pie'));
+    {% endif %}
+});
+
+// Enhanced file upload handler
+function handleFileUpload(type, input) {
+    if (!input.files.length) return;
+    
+    const file = input.files[0];
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('type', type);
+
+    // Show loading state
+    const originalText = input.parentElement.querySelector('h3').textContent;
+    input.parentElement.querySelector('h3').textContent = 'Uploading...';
+    input.disabled = true;
+
+    fetch('/upload', {
+        method: 'POST',
+        body: formData,
+        credentials: 'include'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification('Upload successful! Refreshing data...', 'success');
+            setTimeout(() => location.reload(), 1500);
+        } else {
+            showNotification('Upload failed: ' + (data.error || 'Unknown error'), 'error');
+        }
+    })
+    .catch(error => {
+        showNotification('Upload failed. Please try again.', 'error');
+    })
+    .finally(() => {
+        input.parentElement.querySelector('h3').textContent = originalText;
+        input.disabled = false;
+        input.value = '';
+    });
+}
+
+// Notification system
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 transform transition-transform duration-300 ${
+        type === 'success' ? 'bg-green-500' : 'bg-red-500'
+    } text-white`;
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.transform = 'translateX(100%)';
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+</script>
+{% endblock %}

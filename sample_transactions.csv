@@ -1,0 +1,101 @@
+date,description,amount,category,type
+2025-08-25,Restaurant,3701,Food & Dining,expense
+2025-09-12,Online Shopping,3912,Shopping,expense
+2025-07-30,Online Shopping,2681,Shopping,expense
+2025-09-09,Rent Payment,4524,Housing,expense
+2025-07-07,Water Bill,1878,Housing,expense
+2025-09-16,Electronics,3292,Shopping,expense
+2025-08-04,Uber Ride,858,Transportation,expense
+2025-07-06,Salary,16838,Income,income
+2025-08-30,Netflix,1861,Entertainment,expense
+2025-09-12,Netflix,455,Entertainment,expense
+2025-08-08,Amazon Purchase,882,Shopping,expense
+2025-07-07,Pharmacy,3233,Healthcare,expense
+2025-07-22,Amazon Purchase,4381,Shopping,expense
+2025-06-30,Salary,11847,Income,income
+2025-08-29,Water Bill,1169,Housing,expense
+2025-07-10,Bonus,23575,Income,income
+2025-08-07,Clothing Store,728,Shopping,expense
+2025-07-03,Salary,28969,Income,income
+2025-08-19,Amazon Purchase,2089,Shopping,expense
+2025-06-28,Grocery Store,2079,Food & Dining,expense
+2025-08-08,Dental Checkup,4755,Healthcare,expense
+2025-08-01,Online Shopping,3521,Shopping,expense
+2025-07-13,Movie Theater,767,Entertainment,expense
+2025-09-16,Uber Ride,3162,Transportation,expense
+2025-08-22,Health Insurance,3952,Healthcare,expense
+2025-08-20,Netflix,2026,Entertainment,expense
+2025-07-13,Bonus,26115,Income,income
+2025-07-08,Clothing Store,3480,Shopping,expense
+2025-08-14,Investment Return,21468,Income,income
+2025-07-08,Uber Ride,557,Transportation,expense
+2025-08-21,Movie Theater,3128,Entertainment,expense
+2025-07-10,Netflix,4339,Entertainment,expense
+2025-09-01,Clothing Store,3514,Shopping,expense
+2025-08-24,Salary,23773,Income,income
+2025-07-27,Netflix,2187,Entertainment,expense
+2025-08-28,Electronics,4226,Shopping,expense
+2025-07-18,Public Transport,4253,Transportation,expense
+2025-06-30,Freelance Payment,37260,Income,income
+2025-07-31,Sports Event,3937,Entertainment,expense
+2025-08-06,Electric Bill,4166,Housing,expense
+2025-08-22,Grocery Store,218,Food & Dining,expense
+2025-09-21,Coffee Shop,2273,Food & Dining,expense
+2025-09-20,Concert,1255,Entertainment,expense
+2025-06-29,Supermarket,3854,Food & Dining,expense
+2025-08-14,Water Bill,545,Housing,expense
+2025-07-20,Internet Bill,4939,Housing,expense
+2025-07-17,Electronics,1565,Shopping,expense
+2025-06-29,Uber Ride,1746,Transportation,expense
+2025-09-03,Online Shopping,260,Shopping,expense
+2025-07-14,Pharmacy,2255,Healthcare,expense
+2025-09-07,Grocery Store,1250,Food & Dining,expense
+2025-07-22,Supermarket,2083,Food & Dining,expense
+2025-08-16,Electronics,4131,Shopping,expense
+2025-08-07,Netflix,1863,Entertainment,expense
+2025-09-08,Amazon Purchase,4076,Shopping,expense
+2025-07-04,Grocery Store,3966,Food & Dining,expense
+2025-09-07,Coffee Shop,1556,Food & Dining,expense
+2025-07-28,Amazon Purchase,1802,Shopping,expense
+2025-08-26,Rent Payment,164,Housing,expense
+2025-09-17,Bonus,46797,Income,income
+2025-08-12,Sports Event,2320,Entertainment,expense
+2025-08-16,Internet Bill,4076,Housing,expense
+2025-07-28,Pharmacy,2355,Healthcare,expense
+2025-07-13,Health Insurance,2310,Healthcare,expense
+2025-07-11,Bonus,26561,Income,income
+2025-09-12,Electric Bill,2251,Housing,expense
+2025-08-01,Freelance Payment,17542,Income,income
+2025-07-11,Dental Checkup,4833,Healthcare,expense
+2025-08-31,Movie Theater,1776,Entertainment,expense
+2025-08-19,Dental Checkup,3668,Healthcare,expense
+2025-07-17,Grocery Store,1826,Food & Dining,expense
+2025-07-25,Grocery Store,4047,Food & Dining,expense
+2025-08-07,Restaurant,4038,Food & Dining,expense
+2025-07-09,Uber Ride,4659,Transportation,expense
+2025-09-24,Movie Theater,2706,Entertainment,expense
+2025-07-28,Bonus,11848,Income,income
+2025-07-23,Salary,11888,Income,income
+2025-08-28,Health Insurance,4893,Healthcare,expense
+2025-08-15,Health Insurance,1258,Healthcare,expense
+2025-09-17,Car Maintenance,1822,Transportation,expense
+2025-07-14,Car Maintenance,3485,Transportation,expense
+2025-08-03,Netflix,3534,Entertainment,expense
+2025-07-19,Rent Payment,3396,Housing,expense
+2025-08-18,Online Shopping,4306,Shopping,expense
+2025-08-31,Coffee Shop,3199,Food & Dining,expense
+2025-09-19,Amazon Purchase,4682,Shopping,expense
+2025-09-21,Coffee Shop,1095,Food & Dining,expense
+2025-07-17,Dental Checkup,2763,Healthcare,expense
+2025-09-24,Grocery Store,4613,Food & Dining,expense
+2025-08-22,Netflix,3818,Entertainment,expense
+2025-08-23,Bonus,30345,Income,income
+2025-07-12,Salary,49584,Income,income
+2025-08-21,Clothing Store,2597,Shopping,expense
+2025-09-18,Water Bill,357,Housing,expense
+2025-07-28,Movie Theater,4474,Entertainment,expense
+2025-07-12,Salary,13513,Income,income
+2025-09-04,Online Shopping,3583,Shopping,expense
+2025-09-05,Clothing Store,4862,Shopping,expense
+2025-09-10,Uber Ride,2662,Transportation,expense
+2025-09-22,Bonus,37198,Income,income

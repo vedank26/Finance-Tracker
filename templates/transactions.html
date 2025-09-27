@@ -1,0 +1,218 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="space-y-6">
+    <div class="glass-effect rounded-2xl p-6 shadow-lg">
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">Transaction History</h1>
+        <p class="text-gray-600">View and manage all your financial transactions</p>
+    </div>
+
+    <!-- Summary Cards - FIXED: Check if metrics exists -->
+    {% if metrics %}
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="glass-effect rounded-xl p-4 text-center">
+            <div class="text-2xl font-bold text-gray-800">{{ metrics.transaction_count }}</div>
+            <div class="text-sm text-gray-600">Total Transactions</div>
+        </div>
+        <div class="glass-effect rounded-xl p-4 text-center">
+            <div class="text-2xl font-bold text-green-600">₹{{ "%.2f"|format(metrics.total_income) }}</div>
+            <div class="text-sm text-gray-600">Total Income</div>
+        </div>
+        <div class="glass-effect rounded-xl p-4 text-center">
+            <div class="text-2xl font-bold text-red-600">₹{{ "%.2f"|format(metrics.total_expenses) }}</div>
+            <div class="text-sm text-gray-600">Total Expenses</div>
+        </div>
+        <div class="glass-effect rounded-xl p-4 text-center">
+            <div class="text-2xl font-bold {% if metrics.net_cash_flow >= 0 %}text-green-600{% else %}text-red-600{% endif %}">
+                ₹{{ "%.2f"|format(metrics.net_cash_flow) }}
+            </div>
+            <div class="text-sm text-gray-600">Net Cash Flow</div>
+        </div>
+    </div>
+    {% else %}
+    <div class="glass-effect rounded-xl p-4 text-center">
+        <p class="text-gray-600">No transaction data available. Upload a CSV file to see metrics.</p>
+    </div>
+    {% endif %}
+
+    <!-- Filters and Search -->
+    <div class="glass-effect rounded-2xl p-6 shadow-lg">
+        <div class="flex flex-col md:flex-row gap-4 mb-6">
+            <div class="flex-1 relative">
+                <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                <input type="text" id="searchInput" placeholder="Search transactions..." 
+                       class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+            </div>
+            <select id="categoryFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                <option value="all">All Categories</option>
+                {% for category in categories %}
+                <option value="{{ category }}">{{ category }}</option>
+                {% endfor %}
+            </select>
+            <select id="typeFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                <option value="all">All Types</option>
+                <option value="income">Income</option>
+                <option value="expense">Expense</option>
+            </select>
+            <button onclick="exportToCSV()" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition">
+                <i class="fas fa-download mr-2"></i>Export CSV
+            </button>
+        </div>
+
+        <!-- Transactions Table -->
+        <div class="overflow-x-auto">
+            <table class="w-full bg-white rounded-lg overflow-hidden shadow">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" onclick="sortTable('date')">
+                            Date <i class="fas fa-sort ml-1"></i>
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" onclick="sortTable('description')">
+                            Description <i class="fas fa-sort ml-1"></i>
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" onclick="sortTable('category')">
+                            Category <i class="fas fa-sort ml-1"></i>
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" onclick="sortTable('amount')">
+                            Amount <i class="fas fa-sort ml-1"></i>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200" id="transactionsTable">
+                    {% for transaction in transactions %}
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {{ transaction.date }}
+                        </td>
+                        <td class="px-6 py-4 text-sm font-medium text-gray-900">
+                            {{ transaction.description }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+                                {{ transaction.category }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                            <span class="px-2 py-1 rounded-full text-xs font-medium {% if transaction.type == 'income' %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}">
+                                {{ transaction.type }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-right font-medium {% if transaction.type == 'income' %}text-green-600{% else %}text-red-600{% endif %}">
+                            {{ '+' if transaction.type == 'income' else '-' }}₹{{ "%.2f"|format(transaction.amount) }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentSort = { column: 'date', direction: 'desc' };
+    let allTransactions = {{ transactions | tojson }};
+
+    function filterTransactions() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const categoryFilter = document.getElementById('categoryFilter').value;
+        const typeFilter = document.getElementById('typeFilter').value;
+
+        const filtered = allTransactions.filter(transaction => {
+            const matchesSearch = transaction.description.toLowerCase().includes(searchTerm) ||
+                                transaction.category.toLowerCase().includes(searchTerm);
+            const matchesCategory = categoryFilter === 'all' || transaction.category === categoryFilter;
+            const matchesType = typeFilter === 'all' || transaction.type === typeFilter;
+
+            return matchesSearch && matchesCategory && matchesType;
+        });
+
+        renderTransactions(filtered);
+    }
+
+    function sortTable(column) {
+        if (currentSort.column === column) {
+            currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+        } else {
+            currentSort.column = column;
+            currentSort.direction = 'asc';
+        }
+
+        const sorted = [...allTransactions].sort((a, b) => {
+            let aVal = a[column];
+            let bVal = b[column];
+
+            if (column === 'date') {
+                aVal = new Date(aVal);
+                bVal = new Date(bVal);
+            } else if (column === 'amount') {
+                aVal = parseFloat(aVal);
+                bVal = parseFloat(bVal);
+            } else {
+                aVal = String(aVal).toLowerCase();
+                bVal = String(bVal).toLowerCase();
+            }
+
+            if (aVal < bVal) return currentSort.direction === 'asc' ? -1 : 1;
+            if (aVal > bVal) return currentSort.direction === 'asc' ? 1 : -1;
+            return 0;
+        });
+
+        renderTransactions(sorted);
+    }
+
+    function renderTransactions(transactions) {
+        const tbody = document.getElementById('transactionsTable');
+        tbody.innerHTML = transactions.map(transaction => `
+            <tr class="hover:bg-gray-50 transition">
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    ${transaction.date}
+                </td>
+                <td class="px-6 py-4 text-sm font-medium text-gray-900">
+                    ${transaction.description}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+                        ${transaction.category}
+                    </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm">
+                    <span class="px-2 py-1 rounded-full text-xs font-medium ${transaction.type === 'income' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                        ${transaction.type}
+                    </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-right font-medium ${transaction.type === 'income' ? 'text-green-600' : 'text-red-600'}">
+                    ${transaction.type === 'income' ? '+' : '-'}₹${parseFloat(transaction.amount).toFixed(2)}
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    function exportToCSV() {
+        const headers = ['Date', 'Description', 'Category', 'Type', 'Amount'];
+        const csvContent = [
+            headers.join(','),
+            ...allTransactions.map(t => [
+                t.date,
+                `"${t.description}"`,
+                t.category,
+                t.type,
+                t.amount
+            ].join(','))
+        ].join('\n');
+
+        const blob = new Blob([csvContent], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'transactions-export.csv';
+        a.click();
+        window.URL.revokeObjectURL(url);
+    }
+
+    // Initialize event listeners
+    document.getElementById('searchInput').addEventListener('input', filterTransactions);
+    document.getElementById('categoryFilter').addEventListener('change', filterTransactions);
+    document.getElementById('typeFilter').addEventListener('change', filterTransactions);
+</script>
+{% endblock %}
