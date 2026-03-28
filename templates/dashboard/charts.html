@@ -1,0 +1,44 @@
+<!-- Row 2: Two Charts Side by Side -->
+{% if has_financial_data %}
+<div class="grid lg:grid-cols-2 gap-6 mb-8">
+    {% if cash_flow_chart %}
+    <div class="glass-effect rounded-2xl p-6 shadow-lg">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold text-gray-800">Monthly Cash Flow</h3>
+            <div class="flex space-x-2">
+                <button onclick="toggleChartType('cash-flow-chart', 'bar')" class="px-3 py-1 bg-blue-100 text-blue-700 rounded-lg text-sm">Bar</button>
+                <button onclick="toggleChartType('cash-flow-chart', 'line')" class="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg text-sm">Line</button>
+            </div>
+        </div>
+        <div id="cash-flow-chart" class="h-96"></div>
+    </div>
+    {% endif %}
+
+    {% if portfolio_chart %}
+    <div class="glass-effect rounded-2xl p-6 shadow-lg">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold text-gray-800">Portfolio Allocation</h3>
+            <div class="flex space-x-2">
+                <button onclick="toggleChartType('portfolio-chart', 'pie')" class="px-3 py-1 bg-blue-100 text-blue-700 rounded-lg text-sm">Pie</button>
+                <button onclick="toggleChartType('portfolio-chart', 'bar')" class="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg text-sm">Bar</button>
+            </div>
+        </div>
+        <div id="portfolio-chart" class="h-96"></div>
+    </div>
+    {% endif %}
+</div>
+{% endif %}
+
+<!-- Row 2.5: Net Worth Over Time Chart -->
+{% if has_financial_data and net_worth_chart %}
+<div class="glass-effect rounded-2xl p-6 shadow-lg mb-8">
+    <div class="flex justify-between items-center mb-4">
+        <h3 class="text-xl font-bold text-gray-800">Net Worth Over Time</h3>
+        <div class="flex space-x-2">
+            <button onclick="toggleChartType('net-worth-chart', 'line')" class="px-3 py-1 bg-blue-100 text-blue-700 rounded-lg text-sm">Line</button>
+            <button onclick="toggleChartType('net-worth-chart', 'area')" class="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg text-sm">Area</button>
+        </div>
+    </div>
+    <div id="net-worth-chart" class="h-96"></div>
+</div>
+{% endif %}

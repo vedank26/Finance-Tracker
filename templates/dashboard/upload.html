@@ -1,0 +1,211 @@
+<!-- File Upload Section -->
+<div class="glass-effect rounded-2xl p-6 shadow-lg mb-8">
+    <h3 class="text-xl font-bold text-gray-800 mb-4">
+        <i class="fas fa-upload text-blue-500 mr-2"></i>
+        Upload Financial Data
+    </h3>
+    <p class="text-gray-600 mb-6">Import your financial data to generate insights and track your progress</p>
+    
+    <p class="text-xs text-gray-400 mb-4">
+        💡 Tip: Use 🗑 Clear before uploading if you want to replace existing data. 
+        Or just upload to add new data — duplicates are handled automatically.
+    </p>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Transactions CSV Upload -->
+        <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
+            <i class="fas fa-file-csv text-4xl text-blue-500 mb-3"></i>
+            <h3 class="font-bold text-lg mb-2">Transactions CSV</h3>
+            <p class="text-sm text-gray-600 mb-4">Upload your transaction history</p>
+            <div class="text-xs text-gray-500 mb-4">
+                <strong>Required columns:</strong><br>
+                date, description, amount, category
+            </div>
+            
+            <div class="flex items-center gap-3 mt-3">
+                <!-- Upload button -->
+                <label class="flex-1 cursor-pointer">
+                    <input type="file" 
+                           class="hidden"
+                           accept=".csv"
+                           onchange="handleFileUpload('transactions', this)">
+                    <div class="bg-blue-500 
+                                hover:bg-blue-600 
+                                text-white px-4 py-2 
+                                rounded-lg text-sm 
+                                font-semibold text-center
+                                transition-colors">
+                        📂 Choose File
+                    </div>
+                </label>
+                
+                <!-- Clear button -->
+                <form method="POST"
+                      action="{{ url_for('main.clear_transactions') }}"
+                      onsubmit="return confirm('Clear all transactions?')">
+                    <button type="submit"
+                        class="bg-red-100 
+                               hover:bg-red-200 
+                               text-red-600 px-3 py-2 
+                               rounded-lg text-sm 
+                               font-semibold 
+                               transition-colors
+                               border border-red-300">
+                        🗑 Clear
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Net Worth CSV Upload -->
+        <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-green-400 transition-colors">
+            <i class="fas fa-balance-scale text-4xl text-green-500 mb-3"></i>
+            <h3 class="font-bold text-lg mb-2">Net Worth CSV</h3>
+            <p class="text-sm text-gray-600 mb-4">Track your net worth over time</p>
+            <div class="text-xs text-gray-500 mb-4">
+                <strong>Required columns:</strong><br>
+                date, assets, liabilities
+            </div>
+            
+            <div class="flex items-center gap-3 mt-3">
+                <!-- Upload button -->
+                <label class="flex-1 cursor-pointer">
+                    <input type="file" 
+                           class="hidden"
+                           accept=".csv"
+                           onchange="handleFileUpload('net_worth', this)">
+                    <div class="bg-green-500 
+                                hover:bg-green-600 
+                                text-white px-4 py-2 
+                                rounded-lg text-sm 
+                                font-semibold text-center
+                                transition-colors">
+                        📂 Choose File
+                    </div>
+                </label>
+                
+                <!-- Clear button -->
+                <form method="POST"
+                      action="{{ url_for('main.clear_networth') }}"
+                      onsubmit="return confirm('Clear all net worth data?')">
+                    <button type="submit"
+                        class="bg-red-100 
+                               hover:bg-red-200 
+                               text-red-600 px-3 py-2 
+                               rounded-lg text-sm 
+                               font-semibold 
+                               transition-colors
+                               border border-red-300">
+                        🗑 Clear
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Portfolio CSV Upload -->
+        <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-purple-400 transition-colors">
+            <i class="fas fa-chart-line text-4xl text-purple-500 mb-3"></i>
+            <h3 class="font-bold text-lg mb-2">Portfolio CSV</h3>
+            <p class="text-sm text-gray-600 mb-4">Import your investment portfolio</p>
+            <div class="text-xs text-gray-500 mb-4">
+                <strong>Required columns:</strong><br>
+                symbol, shares, price
+            </div>
+            
+            <div class="flex items-center gap-3 mt-3">
+                <!-- Upload button -->
+                <label class="flex-1 cursor-pointer">
+                    <input type="file" 
+                           class="hidden"
+                           accept=".csv"
+                           onchange="handleFileUpload('portfolio', this)">
+                    <div class="bg-purple-500 
+                                hover:bg-purple-600 
+                                text-white px-4 py-2 
+                                rounded-lg text-sm 
+                                font-semibold text-center
+                                transition-colors">
+                        📂 Choose File
+                    </div>
+                </label>
+                
+                <!-- Clear button -->
+                <form method="POST"
+                      action="{{ url_for('main.clear_portfolio') }}"
+                      onsubmit="return confirm('Clear all portfolio data?')">
+                    <button type="submit"
+                        class="bg-red-100 
+                               hover:bg-red-200 
+                               text-red-600 px-3 py-2 
+                               rounded-lg text-sm 
+                               font-semibold 
+                               transition-colors
+                               border border-red-300">
+                        🗑 Clear
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function handleFileUpload(dataType, fileInput) {
+    if (fileInput.files.length === 0) return;
+    
+    const file = fileInput.files[0];
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('data_type', dataType);
+    
+    // Show loading state
+    const button = fileInput.nextElementSibling;
+    const originalText = button.innerHTML;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Uploading...';
+    button.disabled = true;
+    
+    fetch('/upload', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Show success message
+            showNotification(data.success, 'success');
+            // Reset file input
+            fileInput.value = '';
+            // Refresh page after delay
+            setTimeout(() => window.location.reload(), 2000);
+        } else if (data.error) {
+            showNotification(data.error, 'error');
+        }
+    })
+    .catch(error => {
+        showNotification('Upload failed. Please try again.', 'error');
+    })
+    .finally(() => {
+        // Reset button
+        button.innerHTML = originalText;
+        button.disabled = false;
+    });
+}
+
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show position-fixed`;
+    notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    notification.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    document.body.appendChild(notification);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+        }
+    }, 5000);
+}
+</script>

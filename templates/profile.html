@@ -148,5 +148,30 @@
             {% endif %}
         </div>
     </div>
+
+    <!-- Danger Zone -->
+    <div class="glass-effect rounded-2xl p-6 shadow-lg mt-8 border-2 border-red-200">
+        <h3 class="text-xl font-bold text-red-600 mb-2">
+            ⚠ Danger Zone
+        </h3>
+        <p class="text-gray-500 text-sm mb-4">
+            This will permanently delete ALL your financial data including 
+            transactions, portfolio, and net worth history.
+            This action cannot be undone.
+        </p>
+        
+        <form method="POST"
+              action="{{ url_for('main.clear_all_data') }}"
+              onsubmit="return confirm('WARNING: This deletes ALL your financial data permanently. Are you absolutely sure?')">
+            <button type="submit"
+                class="bg-red-600 
+                       hover:bg-red-700 
+                       text-white px-6 py-3 
+                       rounded-lg font-semibold 
+                       transition-colors">
+                🗑 Clear All My Data
+            </button>
+        </form>
+    </div>
 </div>
 {% endblock %}

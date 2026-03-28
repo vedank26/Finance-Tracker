@@ -1,0 +1,79 @@
+<!-- Row 1: Five Key Metrics -->
+{% if has_financial_data %}
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-8">
+    <!-- Total Income -->
+    <div class="glass-effect rounded-xl p-6 shadow-lg hover:scale-105 transition-transform duration-200">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-base text-gray-600">Total Income</p>
+                <p class="text-3xl font-bold text-green-600">
+                    ₹{{ "{:,.2f}".format(metrics.total_income) }}
+                </p>
+                <p class="text-sm text-gray-500 mt-1">Monthly</p>
+            </div>
+            <i class="fas fa-arrow-up text-3xl text-green-500"></i>
+        </div>
+    </div>
+
+    <!-- Total Expenses -->
+    <div class="glass-effect rounded-xl p-6 shadow-lg hover:scale-105 transition-transform duration-200">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-base text-gray-600">Total Expenses</p>
+                <p class="text-3xl font-bold text-red-600">
+                    ₹{{ "{:,.2f}".format(metrics.total_expenses|abs) }}
+                </p>
+                <p class="text-sm text-gray-500 mt-1">Monthly</p>
+            </div>
+            <i class="fas fa-arrow-down text-3xl text-red-500"></i>
+        </div>
+    </div>
+
+    <!-- Net Worth -->
+    <div class="glass-effect rounded-xl p-6 shadow-lg hover:scale-105 transition-transform duration-200">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-base text-gray-600">Net Worth</p>
+                <p class="text-3xl font-bold text-purple-600">
+                    ₹{{ "{:,.2f}".format(metrics.current_net_worth) }}
+                </p>
+                <p class="text-sm text-gray-500 mt-1">Total Assets</p>
+            </div>
+            <i class="fas fa-chart-line text-3xl text-purple-500"></i>
+        </div>
+    </div>
+
+    <!-- Portfolio Value -->
+    <div class="glass-effect rounded-xl p-6 shadow-lg hover:scale-105 transition-transform duration-200">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-base text-gray-600">Portfolio Value</p>
+                <p class="text-3xl font-bold {% if metrics.total_gain_loss >= 0 %}text-green-600{% else %}text-red-600{% endif %}">
+                    ₹{{ "{:,.2f}".format(metrics.portfolio_value) }}
+                </p>
+                <p class="text-sm {% if metrics.total_gain_loss >= 0 %}text-green-500{% else %}text-red-500{% endif %}">
+                    {% if metrics.total_gain_loss >= 0 %}↑{% else %}↓{% endif %}
+                    ₹{{ "{:,.2f}".format(metrics.total_gain_loss|abs) }}
+                </p>
+            </div>
+            <i class="fas fa-chart-pie text-3xl text-orange-500"></i>
+        </div>
+    </div>
+
+    <!-- Savings Rate -->
+    <div class="glass-effect rounded-xl p-6 shadow-lg hover:scale-105 transition-transform duration-200">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-base text-gray-600">Savings Rate</p>
+                <p class="text-3xl font-bold {% if metrics.savings_rate >= 20 %}text-green-600{% elif metrics.savings_rate >= 10 %}text-yellow-600{% else %}text-red-600{% endif %}">
+                    {{ "%.1f"|format(metrics.savings_rate) }}%
+                </p>
+                <p class="text-sm text-gray-500 mt-1">
+                    {% if metrics.savings_rate >= 20 %}Excellent{% elif metrics.savings_rate >= 10 %}Good{% else %}Needs improvement{% endif %}
+                </p>
+            </div>
+            <i class="fas fa-piggy-bank text-3xl text-green-500"></i>
+        </div>
+    </div>
+</div>
+{% endif %}

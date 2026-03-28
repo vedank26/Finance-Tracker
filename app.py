@@ -72,6 +72,15 @@ class Investment(db.Model):
     gain_loss = db.Column(db.Float, nullable=False)
     gain_loss_percent = db.Column(db.Float, nullable=False)
 
+class Budget(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    category = db.Column(db.String(50), nullable=False)
+    monthly_limit = db.Column(db.Float, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    __table_args__ = (db.UniqueConstraint('user_id', 'category'),)
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
@@ -344,22 +353,7 @@ def utility_processor():
 # Chart Functions
 def create_cash_flow_chart(transactions):
     if not transactions:
-        return [
-            {
-                'x': ['Jan', 'Feb', 'Mar'],
-                'y': [50000, 50000, 50000],
-                'type': 'bar',
-                'name': 'Income',
-                'marker': {'color': 'green'}
-            },
-            {
-                'x': ['Jan', 'Feb', 'Mar'],
-                'y': [8000, 4000, 10000],
-                'type': 'bar',
-                'name': 'Expenses',
-                'marker': {'color': 'red'}
-            }
-        ]
+        return []
     
     try:
         df_data = []
@@ -429,16 +423,7 @@ def create_cash_flow_chart(transactions):
 
 def create_net_worth_chart(net_worth_data):
     if not net_worth_data:
-        return [
-            {
-                'x': ['Jan', 'Feb', 'Mar'],
-                'y': [400000, 430000, 470000],
-                'type': 'scatter',
-                'mode': 'lines+markers',
-                'name': 'Net Worth',
-                'line': {'color': 'blue', 'width': 3}
-            }
-        ]
+        return []
     
     try:
         dates = [nw.date.strftime('%Y-%m-%d') for nw in net_worth_data]
@@ -463,14 +448,7 @@ def create_net_worth_chart(net_worth_data):
 
 def create_portfolio_chart(investments):
     if not investments:
-        return [
-            {
-                'labels': ['AAPL', 'GOOGL', 'TSLA'],
-                'values': [1500, 14000, 4000],
-                'type': 'pie',
-                'name': 'Portfolio Allocation'
-            }
-        ]
+        return []
     
     try:
         symbols = [inv.symbol for inv in investments]
@@ -566,12 +544,41 @@ def dashboard():
                                 .limit(5)\
                                 .all()
         
+        # Get budget data for dashboard
+        user_budgets = Budget.query.filter_by(user_id=current_user.id).all()
+        current_month = date.today().replace(day=1)
+        month_transactions = Transaction.query.filter(
+            Transaction.user_id == current_user.id,
+            Transaction.date >= current_month,
+            Transaction.type == 'expense'
+        ).all()
+        
+        # Calculate spending by category
+        category_spending = {}
+        for t in month_transactions:
+            category_spending[t.category] = category_spending.get(t.category, 0) + abs(t.amount)
+        
+        # Prepare budget data with spending info
+        budget_data = []
+        for budget in user_budgets:
+            spent = category_spending.get(budget.category, 0)
+            percentage = (spent / budget.monthly_limit * 100) if budget.monthly_limit > 0 else 0
+            budget_data.append({
+                'category': budget.category,
+                'monthly_limit': budget.monthly_limit,
+                'spent': spent,
+                'percentage': percentage,
+                'remaining': budget.monthly_limit - spent,
+                'over_budget': spent > budget.monthly_limit
+            })
+        
         return render_template('dashboard.html',
                              metrics=metrics,
                              cash_flow_chart=cash_flow_chart,
                              net_worth_chart=net_worth_chart,
                              portfolio_chart=portfolio_chart,
-                             recent_transactions=recent_transactions)
+                             recent_transactions=recent_transactions,
+                             budget_data=budget_data)
                              
     except Exception as e:
         print(f"ERROR in dashboard route: {e}")
@@ -583,84 +590,6 @@ def dashboard():
                              net_worth_chart=None, 
                              portfolio_chart=None,
                              recent_transactions=[])
-
-@app.route('/generate-sample-data')
-@login_required
-def generate_sample_data():
-    """Generate sample data for testing"""
-    try:
-        Transaction.query.filter_by(user_id=current_user.id).delete()
-        NetWorth.query.filter_by(user_id=current_user.id).delete()
-        Investment.query.filter_by(user_id=current_user.id).delete()
-        
-        sample_transactions = [
-            {'date': '2024-01-15', 'description': 'Salary', 'amount': 50000, 'type': 'income', 'category': 'Income'},
-            {'date': '2024-02-15', 'description': 'Salary', 'amount': 50000, 'type': 'income', 'category': 'Income'},
-            {'date': '2024-03-15', 'description': 'Salary', 'amount': 50000, 'type': 'income', 'category': 'Income'},
-            {'date': '2024-01-05', 'description': 'Grocery Shopping', 'amount': -5000, 'type': 'expense', 'category': 'Food & Dining'},
-            {'date': '2024-01-10', 'description': 'Electricity Bill', 'amount': -3000, 'type': 'expense', 'category': 'Housing'},
-            {'date': '2024-02-03', 'description': 'Restaurant', 'amount': -2500, 'type': 'expense', 'category': 'Food & Dining'},
-            {'date': '2024-02-12', 'description': 'Internet Bill', 'amount': -1500, 'type': 'expense', 'category': 'Housing'},
-            {'date': '2024-03-08', 'description': 'Shopping', 'amount': -8000, 'type': 'expense', 'category': 'Shopping'},
-            {'date': '2024-03-20', 'description': 'Gas Station', 'amount': -2000, 'type': 'expense', 'category': 'Transportation'},
-        ]
-        
-        for data in sample_transactions:
-            transaction = Transaction(
-                user_id=current_user.id,
-                date=datetime.strptime(data['date'], '%Y-%m-%d').date(),
-                description=data['description'],
-                amount=data['amount'],
-                category=data['category'],
-                type=data['type']
-            )
-            db.session.add(transaction)
-        
-        sample_net_worth = [
-            {'date': '2024-01-31', 'assets': 600000, 'liabilities': 200000, 'net_worth': 400000},
-            {'date': '2024-02-29', 'assets': 620000, 'liabilities': 190000, 'net_worth': 430000},
-            {'date': '2024-03-31', 'assets': 650000, 'liabilities': 180000, 'net_worth': 470000},
-        ]
-        
-        for data in sample_net_worth:
-            net_worth = NetWorth(
-                user_id=current_user.id,
-                date=datetime.strptime(data['date'], '%Y-%m-%d').date(),
-                assets=data['assets'],
-                liabilities=data['liabilities'],
-                net_worth=data['net_worth']
-            )
-            db.session.add(net_worth)
-        
-        sample_investments = [
-            {'symbol': 'RELIANCE.NS', 'name': 'Reliance Industries', 'shares': 10, 'current_price': 2500},
-            {'symbol': 'TCS.NS', 'name': 'Tata Consultancy', 'shares': 5, 'current_price': 3800},
-            {'symbol': 'INFY.NS', 'name': 'Infosys Ltd', 'shares': 15, 'current_price': 1700},
-        ]
-        
-        for data in sample_investments:
-            total_value = data['shares'] * data['current_price']
-            investment = Investment(
-                user_id=current_user.id,
-                symbol=data['symbol'],
-                name=data['name'],
-                shares=data['shares'],
-                current_price=data['current_price'],
-                cost_basis=data['current_price'] * 0.9,
-                total_value=total_value,
-                gain_loss=total_value * 0.1,
-                gain_loss_percent=10.0
-            )
-            db.session.add(investment)
-        
-        db.session.commit()
-        flash('Sample data generated successfully!')
-        
-    except Exception as e:
-        db.session.rollback()
-        flash(f'Error generating sample data: {str(e)}')
-    
-    return redirect(url_for('dashboard'))
 
 @app.route('/update-prices')
 @login_required
@@ -847,6 +776,76 @@ def debug_data():
     }
     
     return jsonify(debug_info)
+
+# Budget Management Routes
+@app.route('/budgets', methods=['GET', 'POST'])
+@login_required
+def budgets():
+    if request.method == 'POST':
+        category = request.form['category']
+        monthly_limit = float(request.form['monthly_limit'])
+        
+        # Check if budget already exists for this category
+        existing_budget = Budget.query.filter_by(user_id=current_user.id, category=category).first()
+        if existing_budget:
+            existing_budget.monthly_limit = monthly_limit
+            flash(f'Budget for {category} updated successfully!')
+        else:
+            new_budget = Budget(user_id=current_user.id, category=category, monthly_limit=monthly_limit)
+            db.session.add(new_budget)
+            flash(f'Budget for {category} created successfully!')
+        
+        db.session.commit()
+        return redirect(url_for('budgets'))
+    
+    # Get all budgets for current user
+    user_budgets = Budget.query.filter_by(user_id=current_user.id).all()
+    
+    # Calculate current spending for each category (current month)
+    current_month = date.today().replace(day=1)
+    transactions = Transaction.query.filter(
+        Transaction.user_id == current_user.id,
+        Transaction.date >= current_month,
+        Transaction.type == 'expense'
+    ).all()
+    
+    # Calculate spending by category
+    category_spending = {}
+    for t in transactions:
+        category_spending[t.category] = category_spending.get(t.category, 0) + abs(t.amount)
+    
+    # Prepare budget data with spending info
+    budget_data = []
+    for budget in user_budgets:
+        spent = category_spending.get(budget.category, 0)
+        percentage = (spent / budget.monthly_limit * 100) if budget.monthly_limit > 0 else 0
+        budget_data.append({
+            'category': budget.category,
+            'monthly_limit': budget.monthly_limit,
+            'spent': spent,
+            'percentage': percentage,
+            'remaining': budget.monthly_limit - spent,
+            'over_budget': spent > budget.monthly_limit
+        })
+    
+    # Available categories for new budgets
+    available_categories = ['Food', 'Shopping', 'Transport', 'Entertainment', 'Housing', 'Healthcare', 'Other']
+    existing_categories = [b.category for b in user_budgets]
+    remaining_categories = [cat for cat in available_categories if cat not in existing_categories]
+    
+    return render_template('budgets.html', 
+                         budget_data=budget_data,
+                         remaining_categories=remaining_categories)
+
+@app.route('/budgets/<int:budget_id>/delete', methods=['POST'])
+@login_required
+def delete_budget(budget_id):
+    budget = Budget.query.filter_by(id=budget_id, user_id=current_user.id).first()
+    if budget:
+        db.session.delete(budget)
+        db.session.commit()
+        flash('Budget deleted successfully!')
+    return redirect(url_for('budgets'))
 
 # MAIN APPLICATION RUNNER
 if __name__ == '__main__':
