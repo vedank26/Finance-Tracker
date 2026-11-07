@@ -415,26 +415,6 @@ The college academic project deliverables are located in [`CCL_Finance_Tracker_R
 
 ---
 
-## 15. Viva Examination Demonstration Guide
-
-For academic viva examinations and technical walkthroughs, follow this recommended sequence:
-
-1. **Architecture Walkthrough:** Open [`CCL_Finance_Tracker_Report/aws_finance_tracker_architecture.jpg`](CCL_Finance_Tracker_Report/aws_finance_tracker_architecture.jpg). Explain the 3-tier model (User $\rightarrow$ IGW $\rightarrow$ EC2/Docker $\rightarrow$ RDS MySQL $\rightarrow$ S3 Reports).
-2. **Infrastructure as Code (Terraform):** Show [`terraform/app/`](terraform/app/). Explain how 40 resources were provisioned declaratively with zero manual drift.
-3. **Network Isolation Proof:** Demonstrate that RDS MySQL is in private subnets with no internet route, and Port 3306 is open ONLY to `app-sg`. Highlight that **Port 22 (SSH) is completely closed**.
-4. **Session Manager Administration:** Explain how the host is managed without SSH keys via AWS Systems Manager Session Manager using `finance-tracker-ec2-role`.
-5. **Secrets Governance:** Show that all secrets in Systems Manager Parameter Store are KMS `SecureString` types, retrieved dynamically at boot time without disk leakage.
-6. **Live Application Demonstration:**
-   - Log in using the preserved synthetic test account (`synth_user_2eb09d87`).
-   - Review the executive dashboard, Plotly cash flow charts, and net worth ledger.
-   - Show budget tracking (Utilities budget of $250).
-   - Export a monthly financial report and show S3 pre-signed URL delivery with SSE-S3 AES-256 encryption.
-7. **Cost Guardrail:** Highlight the AWS Budgets $20.00 USD monthly limit with proactive SNS email alerting.
-
-*Model viva questions and answers are available in [`docs/final-evidence/viva-questions.md`](docs/final-evidence/viva-questions.md).*
-
----
-
 ## 👨‍💻 Author & Acknowledgments
 
 - **Author:** Vedank ([@vedank26](https://github.com/vedank26))
