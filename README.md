@@ -30,7 +30,7 @@ A production-grade, multi-tier personal finance tracking and financial intellige
 12. [AWS Deployment Guide](#12-aws-deployment-guide)
 13. [Deployment Evidence & Screenshot Catalog](#13-deployment-evidence--screenshot-catalog)
 14. [Academic Project Report & Documentation](#14-academic-project-report--documentation)
-15. [Viva Examination Demonstration Guide](#15-viva-examination-demonstration-guide)
+15. [Application Screenshots](#application-screenshots)
 
 ---
 
@@ -412,6 +412,64 @@ The college academic project deliverables are located in [`CCL_Finance_Tracker_R
 - **Academic Report Markdown:** [`CCL_Finance_Tracker_Academic_Report.md`](CCL_Finance_Tracker_Report/CCL_Finance_Tracker_Academic_Report.md)
 - **Architecture Diagrams:** [`CCL_Finance_Tracker_Report/diagrams/`](CCL_Finance_Tracker_Report/diagrams/) (8 editable Mermaid diagrams)
 - **Screenshots:** [`CCL_Finance_Tracker_Report/screenshots/`](CCL_Finance_Tracker_Report/screenshots/)
+
+---
+
+## Application Screenshots
+
+A visual walkthrough of the Finance Tracker cloud platform and application features. All screenshots use sanitized demonstration data; full documentation is available in [docs/screenshots/](docs/screenshots/).
+
+### 1. AWS Cloud Architecture Overview
+![AWS Architecture Overview](docs/screenshots/01-architecture-overview.png)
+*High-level multi-tier AWS architecture topology: Public EC2 container host running Docker/Gunicorn/Flask in AZ-a, private Amazon RDS MySQL across isolated subnets in AZ-a and AZ-b, Amazon S3 monthly reports storage, SSM Parameter Store secrets, CloudWatch monitoring, and AWS Budgets cost guardrails.*
+
+---
+
+### 2. Financial Dashboard & CSV Ingestion
+![Financial Dashboard and Upload](docs/screenshots/02-dashboard-upload.png)
+*Executive dashboard featuring real-time financial KPI cards (Total Balance, Monthly Income, Monthly Expenses, Net Savings), rapid transaction entry forms, and multi-format CSV upload interface supporting banking transactions, net worth tracking, and portfolio holdings.*
+
+---
+
+### 3. AI Insights, Budgets & Portfolio Allocation
+![AI Financial Insights, Budgets, and Portfolio](docs/screenshots/03-insights-budgets-portfolio.png)
+*Intelligent financial analytics displaying automated spending recommendations, monthly category budget tracking with visual percentage guardrails, and asset allocation breakdown.*
+
+---
+
+### 4. Monthly Cash-Flow Analytics
+![Monthly Cash-Flow Analytics](docs/screenshots/04-dashboard-cashflow.png)
+*Interactive income versus expenses cash-flow trajectory chart, net savings metrics, and monthly financial performance visualization.*
+
+---
+
+### 5. Recent Transaction Preview
+![Recent Transactions Preview](docs/screenshots/05-recent-transactions.png)
+*Chronological recent activity ledger displaying categorized debits, credits, timestamps, and balance adjustments at a glance.*
+
+---
+
+### 6. Transaction History & Amazon S3 Report Export
+![Transaction History and Amazon S3 Export](docs/screenshots/06-transaction-history-export.png)
+*Full transaction history with category filtering, monthly report compilation, and secure Amazon S3 cloud export delivering 15-minute pre-signed download URLs.*
+
+---
+
+### 7. Searchable Transaction Ledger
+![Searchable Transaction Ledger](docs/screenshots/07-transaction-list.png)
+*Filterable and paginated transaction ledger supporting granular searches by date range, category, and amount with inline editing and record deletion.*
+
+---
+
+### 8. User Profile & Savings Goals
+![User Profile and Financial Goals](docs/screenshots/08-profile-goals.png)
+*User profile management interface displaying account summary statistics, password management, and milestone-based savings goals with progress tracking.*
+
+---
+
+### 9. Financial Health Assessment & Recommendations
+![Financial Health Assessment](docs/screenshots/09-financial-health.png)
+*Algorithmic financial health assessment scoring savings rate, budget discipline, and liquidity ratios with actionable, personalized recommendations.*
 
 ---
 
