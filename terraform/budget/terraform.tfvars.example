@@ -1,0 +1,20 @@
+# ==============================================================================
+# Finance Tracker — Budget & Cost Guardrail Variables Example
+# Copy to terraform.tfvars and customize before running terraform plan.
+# ==============================================================================
+
+aws_region   = "ap-south-1"
+project_name = "finance-tracker"
+environment  = "prototype"
+
+# Email address to receive notifications when spend exceeds thresholds
+alert_email = "your-email@example.com"
+
+# Budget Limit in USD:
+# - Set to "10" for short-term prototype tripwire ($5 alert on ~Day 5, $8 alert on ~Day 8)
+# - Set to "30" for continuous 24/7 monthly coverage (~$28.78/month run-rate)
+budget_limit_amount = "10"
+
+# Percentage thresholds for actual spend alerts
+budget_alert_threshold_1 = 50   # 50% = $5 on $10 limit (or $15 on $30 limit)
+budget_alert_threshold_2 = 80   # 80% = $8 on $10 limit (or $24 on $30 limit)

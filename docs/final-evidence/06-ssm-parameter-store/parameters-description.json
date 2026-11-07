@@ -1,0 +1,100 @@
+[
+  {
+    "Name": "/finance-tracker/APPLICATION_URL",
+    "ARN": "arn:aws:ssm:ap-south-1:AWS_ACCOUNT_ID_REDACTED:parameter/finance-tracker/APPLICATION_URL",
+    "Type": "String",
+    "LastModifiedDate": "2026-11-01 00:23:11.901000+05:30",
+    "LastModifiedUser": "arn:aws:sts::AWS_ACCOUNT_ID_REDACTED:assumed-role/FinanceTrackerAutomationRole/FinanceTrackerStage5FinalApplySession",
+    "Description": "Canonical public base URL for password reset links",
+    "Version": 1,
+    "Tier": "Standard",
+    "Policies": [],
+    "DataType": "text"
+  },
+  {
+    "Name": "/finance-tracker/DB_HOST",
+    "ARN": "arn:aws:ssm:ap-south-1:AWS_ACCOUNT_ID_REDACTED:parameter/finance-tracker/DB_HOST",
+    "Type": "String",
+    "LastModifiedDate": "2026-10-31 15:56:51.747000+05:30",
+    "LastModifiedUser": "arn:aws:iam::AWS_ACCOUNT_ID_REDACTED:user/finance-tracker-deployer",
+    "Description": "RDS MySQL instance private hostname",
+    "Version": 1,
+    "Tier": "Standard",
+    "Policies": [],
+    "DataType": "text"
+  },
+  {
+    "Name": "/finance-tracker/DB_NAME",
+    "ARN": "arn:aws:ssm:ap-south-1:AWS_ACCOUNT_ID_REDACTED:parameter/finance-tracker/DB_NAME",
+    "Type": "String",
+    "LastModifiedDate": "2026-10-31 14:31:50.739000+05:30",
+    "LastModifiedUser": "arn:aws:iam::AWS_ACCOUNT_ID_REDACTED:user/finance-tracker-deployer",
+    "Description": "RDS MySQL database schema name",
+    "Version": 1,
+    "Tier": "Standard",
+    "Policies": [],
+    "DataType": "text"
+  },
+  {
+    "Name": "/finance-tracker/DB_PASSWORD",
+    "ARN": "arn:aws:ssm:ap-south-1:AWS_ACCOUNT_ID_REDACTED:parameter/finance-tracker/DB_PASSWORD",
+    "Type": "SecureString",
+    "KeyId": "alias/aws/ssm",
+    "LastModifiedDate": "2026-10-31 14:31:50.754000+05:30",
+    "LastModifiedUser": "arn:aws:iam::AWS_ACCOUNT_ID_REDACTED:user/finance-tracker-deployer",
+    "Description": "RDS MySQL master database password",
+    "Version": 1,
+    "Tier": "Standard",
+    "Policies": [],
+    "DataType": "text"
+  },
+  {
+    "Name": "/finance-tracker/DB_PORT",
+    "ARN": "arn:aws:ssm:ap-south-1:AWS_ACCOUNT_ID_REDACTED:parameter/finance-tracker/DB_PORT",
+    "Type": "String",
+    "LastModifiedDate": "2026-10-31 15:56:51.746000+05:30",
+    "LastModifiedUser": "arn:aws:iam::AWS_ACCOUNT_ID_REDACTED:user/finance-tracker-deployer",
+    "Description": "RDS MySQL port",
+    "Version": 1,
+    "Tier": "Standard",
+    "Policies": [],
+    "DataType": "text"
+  },
+  {
+    "Name": "/finance-tracker/DB_USER",
+    "ARN": "arn:aws:ssm:ap-south-1:AWS_ACCOUNT_ID_REDACTED:parameter/finance-tracker/DB_USER",
+    "Type": "String",
+    "LastModifiedDate": "2026-10-31 14:31:50.729000+05:30",
+    "LastModifiedUser": "arn:aws:iam::AWS_ACCOUNT_ID_REDACTED:user/finance-tracker-deployer",
+    "Description": "RDS MySQL master database user",
+    "Version": 1,
+    "Tier": "Standard",
+    "Policies": [],
+    "DataType": "text"
+  },
+  {
+    "Name": "/finance-tracker/S3_REPORT_BUCKET",
+    "ARN": "arn:aws:ssm:ap-south-1:AWS_ACCOUNT_ID_REDACTED:parameter/finance-tracker/S3_REPORT_BUCKET",
+    "Type": "String",
+    "LastModifiedDate": "2026-10-31 15:49:19.888000+05:30",
+    "LastModifiedUser": "arn:aws:iam::AWS_ACCOUNT_ID_REDACTED:user/finance-tracker-deployer",
+    "Description": "Name of private S3 bucket for monthly financial CSV reports",
+    "Version": 1,
+    "Tier": "Standard",
+    "Policies": [],
+    "DataType": "text"
+  },
+  {
+    "Name": "/finance-tracker/SECRET_KEY",
+    "ARN": "arn:aws:ssm:ap-south-1:AWS_ACCOUNT_ID_REDACTED:parameter/finance-tracker/SECRET_KEY",
+    "Type": "SecureString",
+    "KeyId": "alias/aws/ssm",
+    "LastModifiedDate": "2026-10-31 14:31:50.741000+05:30",
+    "LastModifiedUser": "arn:aws:iam::AWS_ACCOUNT_ID_REDACTED:user/finance-tracker-deployer",
+    "Description": "Flask session and CSRF secret key",
+    "Version": 1,
+    "Tier": "Standard",
+    "Policies": [],
+    "DataType": "text"
+  }
+]

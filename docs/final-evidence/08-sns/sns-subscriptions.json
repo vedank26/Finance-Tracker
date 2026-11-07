@@ -1,0 +1,8 @@
+[
+  {
+    "Protocol": "email",
+    "Endpoint": "ved***@gmail.com",
+    "SubscriptionArn": "arn:aws:sns:ap-south-1:AWS_ACCOUNT_ID_REDACTED:finance-tracker-alerts:SNS_SUBSCRIPTION_ID_REDACTED",
+    "Status": "CONFIRMED"
+  }
+]

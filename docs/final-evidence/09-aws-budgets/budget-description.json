@@ -1,0 +1,32 @@
+{
+  "BudgetName": "finance-tracker-monthly-cost-guardrail",
+  "BudgetLimit": {
+    "Amount": "20.0",
+    "Unit": "USD"
+  },
+  "TimeUnit": "MONTHLY",
+  "TimePeriod": {
+    "Start": "2026-10-01 05:30:00+05:30",
+    "End": "2087-06-15 05:30:00+05:30"
+  },
+  "CalculatedSpend": {
+    "ActualSpend": {
+      "Amount": "0.0",
+      "Unit": "USD"
+    },
+    "ForecastedSpend": {
+      "Amount": "0.788",
+      "Unit": "USD"
+    }
+  },
+  "BudgetType": "COST",
+  "LastUpdatedTime": "2026-11-01 21:59:58.531000+05:30",
+  "Metrics": [
+    "UnblendedCost"
+  ],
+  "BillingViewArn": "arn:aws:billing::AWS_ACCOUNT_ID_REDACTED:billingview/primary",
+  "HealthStatus": {
+    "Status": "HEALTHY",
+    "LastUpdatedTime": "2026-11-01 21:59:58.007000+05:30"
+  }
+}

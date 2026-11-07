@@ -1,0 +1,49 @@
+{
+  "CompositeAlarms": [],
+  "MetricAlarms": [
+    {
+      "AlarmName": "finance-tracker-ec2-high-cpu",
+      "AlarmArn": "arn:aws:cloudwatch:ap-south-1:AWS_ACCOUNT_ID_REDACTED:alarm:finance-tracker-ec2-high-cpu",
+      "AlarmDescription": "Triggers when EC2 instance CPU exceeds 80% for 10 minutes",
+      "AlarmConfigurationUpdatedTimestamp": "2026-11-01 01:15:23.250000+05:30",
+      "ActionsEnabled": true,
+      "OKActions": [
+        "arn:aws:sns:ap-south-1:AWS_ACCOUNT_ID_REDACTED:finance-tracker-alerts"
+      ],
+      "AlarmActions": [
+        "arn:aws:sns:ap-south-1:AWS_ACCOUNT_ID_REDACTED:finance-tracker-alerts"
+      ],
+      "InsufficientDataActions": [],
+      "StateValue": "OK",
+      "StateReason": "Manual Finance Tracker SNS notification recovery test",
+      "StateUpdatedTimestamp": "2026-11-01 11:16:54.036000+05:30",
+      "MetricName": "CPUUtilization",
+      "Namespace": "AWS/EC2",
+      "Statistic": "Average",
+      "Dimensions": [
+        {
+          "Name": "InstanceId",
+          "Value": "EC2_INSTANCE_ID_REDACTED"
+        }
+      ],
+      "Period": 300,
+      "EvaluationPeriods": 2,
+      "Threshold": 80.0,
+      "ComparisonOperator": "GreaterThanThreshold",
+      "TreatMissingData": "missing",
+      "StateTransitionedTimestamp": "2026-11-01 11:16:54.036000+05:30"
+    }
+  ],
+  "LogAlarms": [],
+  "ResponseMetadata": {
+    "RequestId": "c21bedad-81d1-42c3-9fbf-46f4de8be855",
+    "HTTPStatusCode": 200,
+    "HTTPHeaders": {
+      "x-amzn-requestid": "c21bedad-81d1-42c3-9fbf-46f4de8be855",
+      "content-type": "application/x-amz-json-1.0",
+      "content-length": "1033",
+      "date": "Sun, 01 Nov 2026 17:09:43 GMT"
+    },
+    "RetryAttempts": 0
+  }
+}

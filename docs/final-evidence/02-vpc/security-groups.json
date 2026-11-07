@@ -1,0 +1,127 @@
+{
+  "SecurityGroups": [
+    {
+      "GroupId": "APP_SG_ID_REDACTED",
+      "IpPermissionsEgress": [
+        {
+          "IpProtocol": "-1",
+          "UserIdGroupPairs": [],
+          "IpRanges": [
+            {
+              "Description": "Allow all outbound traffic",
+              "CidrIp": "0.0.0.0/0"
+            }
+          ],
+          "Ipv6Ranges": [],
+          "PrefixListIds": []
+        }
+      ],
+      "Tags": [
+        {
+          "Key": "Environment",
+          "Value": "prototype"
+        },
+        {
+          "Key": "Name",
+          "Value": "finance-tracker-app-sg"
+        },
+        {
+          "Key": "Project",
+          "Value": "finance-tracker"
+        },
+        {
+          "Key": "ManagedBy",
+          "Value": "Terraform"
+        },
+        {
+          "Key": "Component",
+          "Value": "Application-Infrastructure"
+        }
+      ],
+      "VpcId": "VPC_ID_REDACTED",
+      "SecurityGroupArn": "arn:aws:ec2:ap-south-1:AWS_ACCOUNT_ID_REDACTED:security-group/APP_SG_ID_REDACTED",
+      "OwnerId": "AWS_ACCOUNT_ID_REDACTED",
+      "GroupName": "finance-tracker-app-sg",
+      "Description": "Security group for Finance Tracker application host",
+      "IpPermissions": [
+        {
+          "IpProtocol": "tcp",
+          "FromPort": 80,
+          "ToPort": 80,
+          "UserIdGroupPairs": [],
+          "IpRanges": [
+            {
+              "Description": "Allow inbound HTTP traffic",
+              "CidrIp": "0.0.0.0/0"
+            }
+          ],
+          "Ipv6Ranges": [],
+          "PrefixListIds": []
+        }
+      ]
+    },
+    {
+      "GroupId": "DB_SG_ID_REDACTED",
+      "IpPermissionsEgress": [],
+      "Tags": [
+        {
+          "Key": "Project",
+          "Value": "finance-tracker"
+        },
+        {
+          "Key": "Environment",
+          "Value": "prototype"
+        },
+        {
+          "Key": "Name",
+          "Value": "finance-tracker-db-sg"
+        },
+        {
+          "Key": "ManagedBy",
+          "Value": "Terraform"
+        },
+        {
+          "Key": "Component",
+          "Value": "Application-Infrastructure"
+        }
+      ],
+      "VpcId": "VPC_ID_REDACTED",
+      "SecurityGroupArn": "arn:aws:ec2:ap-south-1:AWS_ACCOUNT_ID_REDACTED:security-group/DB_SG_ID_REDACTED",
+      "OwnerId": "AWS_ACCOUNT_ID_REDACTED",
+      "GroupName": "finance-tracker-db-sg",
+      "Description": "Security group for private MySQL RDS instance",
+      "IpPermissions": [
+        {
+          "IpProtocol": "tcp",
+          "FromPort": 3306,
+          "ToPort": 3306,
+          "UserIdGroupPairs": [
+            {
+              "Description": "Allow MySQL traffic strictly from application security group",
+              "UserId": "AWS_ACCOUNT_ID_REDACTED",
+              "GroupId": "APP_SG_ID_REDACTED"
+            }
+          ],
+          "IpRanges": [],
+          "Ipv6Ranges": [],
+          "PrefixListIds": []
+        }
+      ]
+    }
+  ],
+  "ResponseMetadata": {
+    "RequestId": "adecd72a-27c7-4e1d-ba5e-0c0bf01419df",
+    "HTTPStatusCode": 200,
+    "HTTPHeaders": {
+      "x-amzn-requestid": "adecd72a-27c7-4e1d-ba5e-0c0bf01419df",
+      "cache-control": "no-cache, no-store",
+      "strict-transport-security": "max-age=31536000; includeSubDomains",
+      "vary": "accept-encoding",
+      "content-type": "text/xml;charset=UTF-8",
+      "content-length": "2493",
+      "date": "Sun, 01 Nov 2026 17:09:27 GMT",
+      "server": "AmazonEC2"
+    },
+    "RetryAttempts": 0
+  }
+}

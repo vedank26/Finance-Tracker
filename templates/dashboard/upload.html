@@ -43,6 +43,7 @@
                 <form method="POST"
                       action="{{ url_for('main.clear_transactions') }}"
                       onsubmit="return confirm('Clear all transactions?')">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <button type="submit"
                         class="bg-red-100 
                                hover:bg-red-200 
@@ -88,6 +89,7 @@
                 <form method="POST"
                       action="{{ url_for('main.clear_networth') }}"
                       onsubmit="return confirm('Clear all net worth data?')">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <button type="submit"
                         class="bg-red-100 
                                hover:bg-red-200 
@@ -133,6 +135,7 @@
                 <form method="POST"
                       action="{{ url_for('main.clear_portfolio') }}"
                       onsubmit="return confirm('Clear all portfolio data?')">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <button type="submit"
                         class="bg-red-100 
                                hover:bg-red-200 
@@ -157,6 +160,9 @@ function handleFileUpload(dataType, fileInput) {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('data_type', dataType);
+    if (typeof getCSRFToken === 'function') {
+        formData.append('csrf_token', getCSRFToken());
+    }
     
     // Show loading state
     const button = fileInput.nextElementSibling;
@@ -166,6 +172,9 @@ function handleFileUpload(dataType, fileInput) {
     
     fetch('/upload', {
         method: 'POST',
+        headers: {
+            'X-CSRFToken': typeof getCSRFToken === 'function' ? getCSRFToken() : ''
+        },
         body: formData
     })
     .then(response => response.json())

@@ -1,0 +1,15 @@
+{
+  "Policy": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Sid\":\"AllowCloudWatchAlarmsToPublish\",\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"cloudwatch.amazonaws.com\"},\"Action\":\"sns:Publish\",\"Resource\":\"arn:aws:sns:ap-south-1:AWS_ACCOUNT_ID_REDACTED:finance-tracker-alerts\",\"Condition\":{\"StringEquals\":{\"aws:SourceAccount\":\"AWS_ACCOUNT_ID_REDACTED\",\"aws:SourceArn\":\"arn:aws:cloudwatch:ap-south-1:AWS_ACCOUNT_ID_REDACTED:alarm:finance-tracker-ec2-high-cpu\"}}},{\"Sid\":\"AllowBudgetsToPublish\",\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"budgets.amazonaws.com\"},\"Action\":\"sns:Publish\",\"Resource\":\"arn:aws:sns:ap-south-1:AWS_ACCOUNT_ID_REDACTED:finance-tracker-alerts\",\"Condition\":{\"StringEquals\":{\"aws:SourceAccount\":\"AWS_ACCOUNT_ID_REDACTED\"},\"ArnEquals\":{\"aws:SourceArn\":\"arn:aws:budgets::AWS_ACCOUNT_ID_REDACTED:budget/finance-tracker-monthly-cost-guardrail\"}}}]}",
+  "LambdaSuccessFeedbackSampleRate": "0",
+  "Owner": "AWS_ACCOUNT_ID_REDACTED",
+  "SubscriptionsPending": "0",
+  "TopicArn": "arn:aws:sns:ap-south-1:AWS_ACCOUNT_ID_REDACTED:finance-tracker-alerts",
+  "EffectiveDeliveryPolicy": "{\"http\":{\"defaultHealthyRetryPolicy\":{\"minDelayTarget\":20,\"maxDelayTarget\":20,\"numRetries\":3,\"numMaxDelayRetries\":0,\"numNoDelayRetries\":0,\"numMinDelayRetries\":0,\"backoffFunction\":\"linear\"},\"disableSubscriptionOverrides\":false,\"defaultRequestPolicy\":{\"headerContentType\":\"text/plain; charset=UTF-8\"}}}",
+  "FirehoseSuccessFeedbackSampleRate": "0",
+  "SubscriptionsConfirmed": "1",
+  "SQSSuccessFeedbackSampleRate": "0",
+  "HTTPSuccessFeedbackSampleRate": "0",
+  "ApplicationSuccessFeedbackSampleRate": "0",
+  "DisplayName": "Finance Tracker Alerts",
+  "SubscriptionsDeleted": "0"
+}

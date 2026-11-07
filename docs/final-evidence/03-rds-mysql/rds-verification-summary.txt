@@ -1,0 +1,20 @@
+AWS RDS MYSQL 8.0 VERIFICATION EVIDENCE
+========================================
+DB Identifier: finance-tracker-mysql
+DB Instance Class: db.t3.micro
+Engine: mysql (Version: 8.0.46-rds.20260908)
+Status: available
+Endpoint: RDS_ENDPOINT_REDACTED:3306
+Allocated Storage: 20 GB (gp3)
+Publicly Accessible: False (STRICTLY PRIVATE)
+Storage Encrypted: True (AWS KMS Encrypted at rest)
+Multi-AZ: False
+DB Subnet Group: finance-tracker-rds-subnet-group
+Subnets: ['PRIVATE_SUBNET_B_ID_REDACTED', 'PRIVATE_SUBNET_A_ID_REDACTED']
+VPC Security Groups: ['DB_SG_ID_REDACTED']
+Master Username: financeuser
+Database Name: financedb
+
+APPLICATION CONNECTIVITY:
+Application successfully connects over private VPC endpoint.
+All 5 application tables (user, transaction, net_worth, investment, budget) verified initialized.

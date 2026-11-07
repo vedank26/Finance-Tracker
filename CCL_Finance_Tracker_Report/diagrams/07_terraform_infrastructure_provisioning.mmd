@@ -1,0 +1,45 @@
+%% Figure 7: Terraform Infrastructure as Code Provisioning Pipeline
+flowchart TD
+    subgraph LocalDev["DevOps Workspace (IaC Definitions)"]
+        direction TB
+        TFConfig["Terraform Codebase (11 .tf files in terraform/app)<br/>- vpc.tf, ec2.tf, rds.tf, s3.tf, iam.tf<br/>- ssm.tf, cloudwatch.tf, sns.tf, variables.tf"]
+        TFState[("terraform.tfstate<br/>Local/Managed State File<br/>Exactly 40 Managed Resources")]
+    end
+
+    subgraph Execution["Terraform CLI Engine"]
+        direction TB
+        Init["1. terraform init<br/>Downloads aws provider ~> 5.0"]
+        Validate["2. terraform validate<br/>Checks syntax, variable types, references"]
+        Plan["3. terraform plan<br/>Generates execution diff graph against AWS API"]
+        Apply["4. terraform apply<br/>Executes atomic resource mutations with dependency DAG"]
+    end
+
+    subgraph AWSCloud["AWS Target Infrastructure (ap-south-1)"]
+        direction TB
+        VPCRes["1. Network Tier (11 Resources)<br/>VPC, IGW, 3 Subnets, Route Tables & Associations"]
+        SecRes["2. Security Tier (4 Resources)<br/>app-sg, db-sg, IAM Role, Instance Profile, Policies"]
+        StoreRes["3. Storage & Secrets (14 Resources)<br/>S3 Bucket, Encryption, Lifecycle, 8 SSM Parameters"]
+        DBRes["4. Database Tier (2 Resources)<br/>DB Subnet Group, RDS MySQL Instance"]
+        ComputeRes["5. Compute Tier (2 Resources)<br/>EC2 Instance (t3.micro), Elastic IP"]
+        MonRes["6. Monitoring & Alerts (7 Resources)<br/>CloudWatch Log Group, Alarm, SNS Topic & Policy, Email Sub"]
+    end
+
+    TFConfig --> Init
+    Init --> Validate
+    Validate --> Plan
+    Plan <--> TFState
+    Plan --> Apply
+    Apply --> VPCRes
+    VPCRes --> SecRes
+    SecRes --> StoreRes
+    StoreRes --> DBRes
+    DBRes --> ComputeRes
+    ComputeRes --> MonRes
+    Apply -.->|"Updates state post-creation"| TFState
+
+    classDef dev fill:#ede7f6,stroke:#512da8,stroke-width:2px;
+    classDef exec fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px;
+    classDef cloud fill:#e3f2fd,stroke:#1565c0,stroke-width:2px;
+    class LocalDev dev;
+    class Execution exec;
+    class AWSCloud cloud;

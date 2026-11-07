@@ -1,0 +1,21 @@
+AMAZON SNS ALERTS & SUBSCRIPTIONS VERIFICATION
+==============================================
+Topic Name: finance-tracker-alerts
+Topic ARN: arn:aws:sns:ap-south-1:AWS_ACCOUNT_ID_REDACTED:finance-tracker-alerts
+Subscriptions Confirmed: 1
+Subscriptions Pending: 0
+
+CONFIRMED SUBSCRIBERS:
+- Protocol: email | Endpoint: ved***@gmail.com | Status: CONFIRMED
+
+TOPIC ACCESS POLICY (Dual-Publishing Authorized):
+1. Statement: AllowCloudWatchAlarmsToPublish
+   Principal: cloudwatch.amazonaws.com
+   Action: sns:Publish
+   Condition: aws:SourceArn = arn:aws:cloudwatch:ap-south-1:AWS_ACCOUNT_ID_REDACTED:alarm:finance-tracker-ec2-high-cpu
+2. Statement: AllowBudgetsToPublish
+   Principal: budgets.amazonaws.com
+   Action: sns:Publish
+   Condition:
+     - aws:SourceAccount = AWS_ACCOUNT_ID_REDACTED
+     - aws:SourceArn = arn:aws:budgets::AWS_ACCOUNT_ID_REDACTED:budget/finance-tracker-monthly-cost-guardrail

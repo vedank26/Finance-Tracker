@@ -1,0 +1,37 @@
+AWS VPC & NETWORKING TOPOLOGY EVIDENCE
+=======================================
+VPC ID: VPC_ID_REDACTED
+VPC CIDR: 10.0.0.0/16
+Default Tenancy: default
+
+SUBNETS:
+1. Public Subnet A:
+   ID: PUBLIC_SUBNET_ID_REDACTED | CIDR: 10.0.1.0/24 | AZ: ap-south-1a
+   Role: Hosts EC2 instance (finance-tracker-app) with Elastic IP attachment
+2. Private Subnet A:
+   ID: subnet-08ffebdb5b8bbec1d | CIDR: 10.0.10.0/24 | AZ: ap-south-1a
+   Role: RDS MySQL Subnet Group member (strictly private, no IGW route)
+3. Private Subnet B:
+   ID: subnet-0c868019b16521566 | CIDR: 10.0.11.0/24 | AZ: ap-south-1b
+   Role: RDS MySQL Subnet Group member (strictly private, no IGW route)
+
+INTERNET GATEWAY:
+IGW ID: IGW_ID_REDACTED (Attached to VPC_ID_REDACTED)
+
+ROUTE TABLES:
+1. Public Route Table (PUBLIC_RTB_ID_REDACTED):
+   - 10.0.0.0/16 -> Local
+   - 0.0.0.0/0 -> IGW_ID_REDACTED
+   - Association: PUBLIC_SUBNET_ID_REDACTED (Explicit)
+2. Private Route Table (rtb-0bf4a1a0f91ce0a9f):
+   - 10.0.0.0/16 -> Local
+   - Associations: subnet-08ffebdb5b8bbec1d, subnet-0c868019b16521566 (Explicit)
+   - Zero Internet Access / Zero NAT Gateways (Air-gapped database tier)
+
+SECURITY GROUPS:
+1. Application Security Group: finance-tracker-app-sg (APP_SG_ID_REDACTED)
+   - Ingress Rule: TCP port 80 from 0.0.0.0/0
+   - Ingress Rule SSH 22: CLOSED (Management is strictly via SSM Session Manager)
+2. Database Security Group: finance-tracker-db-sg (DB_SG_ID_REDACTED)
+   - Ingress Rule: TCP port 3306 from APP_SG_ID_REDACTED (Application SG only)
+   - Ingress Rule 0.0.0.0/0: NONE (RDS is completely unreachable from public internet)

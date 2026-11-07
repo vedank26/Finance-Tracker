@@ -1,0 +1,55 @@
+{
+  "finance-tracker-cloudwatch-logs-policy": {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Action": [
+          "logs:CreateLogStream",
+          "logs:PutLogEvents",
+          "logs:DescribeLogStreams"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:logs:ap-south-1:AWS_ACCOUNT_ID_REDACTED:log-group:/finance-tracker/app:*",
+        "Sid": "StreamApplicationLogs"
+      }
+    ]
+  },
+  "finance-tracker-s3-reports-policy": {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Action": [
+          "s3:ListBucket",
+          "s3:GetBucketLocation"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:s3:::finance-tracker-reports-S3_BUCKET_REDACTED",
+        "Sid": "ListReportsBucket"
+      },
+      {
+        "Action": [
+          "s3:PutObject",
+          "s3:GetObject"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:s3:::finance-tracker-reports-S3_BUCKET_REDACTED/monthly-reports/*",
+        "Sid": "ManageMonthlyReportsObjects"
+      }
+    ]
+  },
+  "finance-tracker-ssm-parameters-policy": {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Action": [
+          "ssm:GetParameter",
+          "ssm:GetParameters",
+          "ssm:GetParametersByPath"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:ssm:ap-south-1:AWS_ACCOUNT_ID_REDACTED:parameter/finance-tracker/*",
+        "Sid": "ReadProjectParameters"
+      }
+    ]
+  }
+}

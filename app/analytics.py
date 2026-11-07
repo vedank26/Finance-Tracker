@@ -1,15 +1,125 @@
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, date
 import json
 
 # Optional AI import - will only be used if available
 try:
-    import google.generativeai as genai
+    from google import genai
     AI_AVAILABLE = True
 except ImportError:
     AI_AVAILABLE = False
 
-def get_user_financial_summary(user_id):
+
+def get_month_date_range(target_date=None, year=None, month=None):
+    """
+    Returns (start_date, next_month_start) representing a half-open date range:
+        start_date <= transaction_date < next_month_start
+
+    This reliably includes day 1 through the last day of the calendar month
+    regardless of month length or leap years, and cleanly excludes previous and future months.
+    """
+    if year is not None and month is not None:
+        y, m = int(year), int(month)
+    elif target_date is not None:
+        if isinstance(target_date, datetime):
+            target_date = target_date.date()
+        y, m = target_date.year, target_date.month
+    else:
+        today = date.today()
+        y, m = today.year, today.month
+
+    start_date = date(y, m, 1)
+    if m == 12:
+        next_month_start = date(y + 1, 1, 1)
+    else:
+        next_month_start = date(y, m + 1, 1)
+
+    return start_date, next_month_start
+
+
+def calculate_monthly_budget_status(user_id, target_date=None, year=None, month=None,
+                                    start_date=None, end_date=None):
+    """
+    Calculates monthly budget status for a user for a specific calendar month
+    or custom period.
+
+    Rules:
+    - Expenses: Transactions belonging to user_id where amount < 0 (or type == 'expense' and amount != 0).
+      Income transactions (amount > 0 or type == 'income') are strictly excluded.
+    - Dates: Half-open interval start_date <= date < next_month_start (or <= end_date if explicit).
+    - Status:
+        over_budget = spent > monthly_limit
+        remaining = monthly_limit - spent
+        percentage = (spent / monthly_limit * 100) if monthly_limit > 0 else 0
+        over_by = max(0.0, spent - monthly_limit)
+    """
+    from app.models import Transaction, Budget
+
+    # Resolve date boundaries
+    if start_date is not None:
+        # Custom date range passed (e.g. 30days, 3months, or all)
+        date_filter = [Transaction.user_id == user_id]
+        if start_date:
+            date_filter.append(Transaction.date >= start_date)
+        if end_date:
+            date_filter.append(Transaction.date <= end_date)
+        transactions = Transaction.query.filter(*date_filter).all()
+    else:
+        # Standard calendar month half-open interval: start_date <= date < next_month_start
+        s_date, next_m_start = get_month_date_range(target_date=target_date, year=year, month=month)
+        transactions = Transaction.query.filter(
+            Transaction.user_id == user_id,
+            Transaction.date >= s_date,
+            Transaction.date < next_m_start
+        ).all()
+
+    # User's budgets
+    user_budgets = Budget.query.filter_by(user_id=user_id).all()
+
+    # Calculate category spending strictly for expenses (exclude income)
+    period_category_spending = {}
+    for t in transactions:
+        # Exclude income transactions
+        if t.type == 'income' or t.amount > 0:
+            continue
+        if t.amount < 0 or t.type == 'expense':
+            cat = t.category.strip()
+            # Follow existing database conventions: expenses are stored as negative amounts;
+            # use abs(t.amount) to get the positive spent amount without double-negation.
+            spent_amt = abs(float(t.amount))
+            period_category_spending[cat] = period_category_spending.get(cat, 0.0) + spent_amt
+
+    budget_status = []
+    for b in user_budgets:
+        # Match category case-insensitively with fallback to exact
+        cat_name = b.category.strip()
+        spent = 0.0
+        for cat_key, amt in period_category_spending.items():
+            if cat_key.lower() == cat_name.lower():
+                spent += amt
+
+        limit = float(b.monthly_limit)
+        remaining = limit - spent
+        percentage = (spent / limit * 100.0) if limit > 0 else 0.0
+        over_budget = spent > limit
+        over_by = max(0.0, spent - limit)
+
+        budget_status.append({
+            'id': b.id,
+            'category': b.category,
+            'monthly_limit': limit,
+            'limit': limit,
+            'spent': spent,
+            'remaining': remaining,
+            'percentage': percentage,
+            'over_budget': over_budget,
+            'over_by': over_by
+        })
+
+    return budget_status
+
+
+def get_user_financial_summary(user_id, target_date=None, year=None, month=None):
     from app.models import Transaction, Investment, Budget
     
     transactions = Transaction.query.filter_by(user_id=user_id).all()
@@ -17,14 +127,38 @@ def get_user_financial_summary(user_id):
     budgets = Budget.query.filter_by(user_id=user_id).all()
     
     # Income and expenses
-    total_income = sum(
-        t.amount for t in transactions
-        if t.amount > 0
-    )
-    total_expenses = sum(
-        abs(t.amount) for t in transactions
-        if t.amount < 0
-    )
+    # Follow the same transaction classification rules as create_cash_flow_chart:
+    # 1. Exclude investment transactions from income and expense totals
+    # 2. Income: type is 'income' or (amount > 0 and type != 'expense')
+    # 3. Expense: type is 'expense' or (amount < 0 and type != 'income')
+    # 4. Use absolute amounts appropriately for consistent signs
+    eligible_income = []
+    eligible_expenses = []
+
+    for t in transactions:
+        if not t or t.amount is None:
+            continue
+        try:
+            amt = float(t.amount)
+        except (ValueError, TypeError):
+            continue
+        if amt == 0:
+            continue
+
+        t_type = (t.type or '').lower().strip()
+        if t_type == 'investment':
+            continue
+
+        is_income = (t_type == 'income') or (amt > 0 and t_type != 'expense')
+        is_expense = (t_type == 'expense') or (amt < 0 and t_type != 'income')
+
+        if is_income:
+            eligible_income.append(abs(amt))
+        elif is_expense:
+            eligible_expenses.append(abs(amt))
+
+    total_income = round(sum(eligible_income), 2)
+    total_expenses = round(sum(eligible_expenses), 2)
     
     # Rates (always positive)
     savings_rate = (
@@ -62,25 +196,10 @@ def get_user_financial_summary(user_id):
         inv.gain_loss for inv in investments
     )
     
-    # Budget vs actual
-    budget_status = []
-    for b in budgets:
-        spent = category_spending.get(
-            b.category, 0
-        )
-        budget_status.append({
-            'category': b.category,
-            'limit': b.monthly_limit,
-            'spent': spent,
-            'remaining': b.monthly_limit - spent,
-            'percentage': (
-                spent / b.monthly_limit * 100
-            ) if b.monthly_limit > 0 else 0,
-            'over_budget': spent > b.monthly_limit,
-            'over_by': max(
-                0, spent - b.monthly_limit
-            )
-        })
+    # Budget vs actual — calculated strictly for the intended calendar month
+    budget_status = calculate_monthly_budget_status(
+        user_id, target_date=target_date, year=year, month=month
+    )
     
     return {
         'transactions': transactions,
@@ -146,7 +265,7 @@ def calculate_financial_metrics(user_id):
         
         # Return ALL required metrics for template
         metrics = FinancialMetrics(
-            net_cash_flow=summary['total_income'] - summary['total_expenses'],
+            net_cash_flow=round(summary['total_income'] - summary['total_expenses'], 2),
             savings_rate=round(summary['savings_rate'], 1),
             current_net_worth=current_net_worth,
             portfolio_value=summary['portfolio_value'],
@@ -251,77 +370,178 @@ def get_health_info(score):
             'text_color': 'text-red-600'
         }
 
+class CashFlowChart(dict):
+    """
+    Container for Monthly Cash Flow chart data and summary metrics.
+    Inherits from dict for seamless template access, while providing
+    attribute access and list-like iteration over traces.
+    """
+    def __init__(self, traces=None, total_income=0.0, total_expense=0.0, net_income=0.0, month_count=0, months=None):
+        traces = traces or []
+        months = months or []
+        has_data = month_count > 0 and len(traces) > 0
+        super().__init__(
+            data=traces,
+            traces=traces,
+            total_income=total_income,
+            total_expense=total_expense,
+            net_income=net_income,
+            has_data=has_data,
+            month_count=month_count,
+            months=months
+        )
+        self.data = traces
+        self.traces = traces
+        self.total_income = total_income
+        self.total_expense = total_expense
+        self.net_income = net_income
+        self.has_data = has_data
+        self.month_count = month_count
+        self.months = months
+
+    def __iter__(self):
+        return iter(self.data)
+
+    def __len__(self):
+        return len(self.data)
+
+    def __bool__(self):
+        # Represents presence of the chart object; check .has_data for actual points
+        return True
+
 # Chart Functions
 def create_cash_flow_chart(transactions):
+    """
+    Generate Monthly Cash Flow chart data dynamically from actual transactions.
+    Groups transactions by calendar month and year, sorted chronologically.
+    Returns a CashFlowChart container with 'Total Income' and 'Total Expense'
+    series, formatted with Indian Rupee (₹) currency labels and summary metrics.
+    """
     if not transactions:
-        return []
+        return CashFlowChart()
     
     try:
-        import pandas as pd
-        df_data = []
+        from datetime import date, datetime
+        import calendar
+
+        eligible = []
         for t in transactions:
-            df_data.append({
-                'date': t.date,
-                'amount': t.amount,
-                'type': t.type,
-                'category': t.category
-            })
-        
-        df = pd.DataFrame(df_data)
-        
-        # Convert to datetime and extract month
-        df['date'] = pd.to_datetime(df['date'])
-        df['month'] = df['date'].dt.to_period('M').astype(str)
-        
-        # Group by month and type, sum amounts
-        monthly_data = df.groupby(['month', 'type'])['amount'].sum().unstack(fill_value=0)
-        
-        # Reset index to make month a column
-        monthly_data = monthly_data.reset_index()
-        
-        # Ensure required columns exist
-        required_columns = ['income', 'expense']
-        for col in required_columns:
-            if col not in monthly_data.columns:
-                monthly_data[col] = 0
-        
-        # Calculate net flow
-        monthly_data['net_flow'] = monthly_data['income'] + monthly_data['expense']
-        
-        # Sort by month
-        monthly_data = monthly_data.sort_values('month')
-        
-        # Create chart data
+            if not t or t.amount is None:
+                continue
+            try:
+                amt = float(t.amount)
+            except (ValueError, TypeError):
+                continue
+            if amt == 0:
+                continue
+
+            t_type = (t.type or '').lower().strip()
+            # Exclude investment transactions from cash flow income/expenses
+            if t_type == 'investment':
+                continue
+
+            # Robust date extraction (supporting datetime, date, and string)
+            t_date = t.date
+            if isinstance(t_date, str):
+                try:
+                    t_date = datetime.strptime(t_date[:10], '%Y-%m-%d').date()
+                except Exception:
+                    continue
+            elif hasattr(t_date, 'date'):
+                t_date = t_date.date()
+            elif not hasattr(t_date, 'year'):
+                continue
+
+            # Application transaction conventions:
+            # Income: type is 'income' or (amount > 0 and type != 'expense')
+            # Expense: type is 'expense' or (amount < 0 and type != 'income')
+            is_income = (t_type == 'income') or (amt > 0 and t_type != 'expense')
+            is_expense = (t_type == 'expense') or (amt < 0 and t_type != 'income')
+
+            if is_income:
+                eligible.append({
+                    'year': t_date.year,
+                    'month': t_date.month,
+                    'type': 'income',
+                    'amount': abs(amt)
+                })
+            elif is_expense:
+                eligible.append({
+                    'year': t_date.year,
+                    'month': t_date.month,
+                    'type': 'expense',
+                    'amount': abs(amt)
+                })
+
+        if not eligible:
+            return CashFlowChart()
+
+        # Extract genuine transaction months and sort strictly chronologically
+        unique_months = sorted(list(set((item['year'], item['month']) for item in eligible)))
+
+        month_labels = []
+        income_by_month = []
+        expense_by_month = []
+
+        total_income = 0.0
+        total_expense = 0.0
+
+        for (yr, mo) in unique_months:
+            # Human-readable month label (e.g. "Jan 2026", "Sep 2026", "Oct 2026")
+            label = f"{calendar.month_abbr[mo]} {yr}"
+            month_labels.append(label)
+
+            mo_income = sum(item['amount'] for item in eligible if item['year'] == yr and item['month'] == mo and item['type'] == 'income')
+            mo_expense = sum(item['amount'] for item in eligible if item['year'] == yr and item['month'] == mo and item['type'] == 'expense')
+
+            income_by_month.append(round(mo_income, 2))
+            expense_by_month.append(round(mo_expense, 2))
+
+            total_income += mo_income
+            total_expense += mo_expense
+
+        net_income = total_income - total_expense
+
+        # Build Plotly traces: Two distinct series (Total Income, Total Expense)
         chart_data = [
             {
-                'x': monthly_data['month'].tolist(),
-                'y': monthly_data['income'].tolist(),
+                'x': month_labels,
+                'y': income_by_month,
                 'type': 'bar',
-                'name': 'Income',
-                'marker': {'color': 'green'}
+                'name': 'Total Income',
+                'marker': {
+                    'color': '#0D9488',  # Professional teal
+                    'opacity': 0.95
+                },
+                'hovertemplate': '<b>%{x}</b><br>Total Income: ₹%{y:,.2f}<extra></extra>'
             },
             {
-                'x': monthly_data['month'].tolist(),
-                'y': abs(monthly_data['expense']).tolist(),
+                'x': month_labels,
+                'y': expense_by_month,
                 'type': 'bar',
-                'name': 'Expenses',
-                'marker': {'color': 'red'}
-            },
-            {
-                'x': monthly_data['month'].tolist(),
-                'y': monthly_data['net_flow'].tolist(),
-                'type': 'scatter',
-                'mode': 'lines+markers',
-                'name': 'Net Flow',
-                'line': {'color': 'blue', 'width': 3}
+                'name': 'Total Expense',
+                'marker': {
+                    'color': '#F43F5E',  # Professional coral/rose
+                    'opacity': 0.90
+                },
+                'hovertemplate': '<b>%{x}</b><br>Total Expense: ₹%{y:,.2f}<extra></extra>'
             }
         ]
-        
-        return chart_data
-        
+
+        return CashFlowChart(
+            traces=chart_data,
+            total_income=round(total_income, 2),
+            total_expense=round(total_expense, 2),
+            net_income=round(net_income, 2),
+            month_count=len(unique_months),
+            months=month_labels
+        )
+
     except Exception as e:
         print(f"Error creating cash flow chart: {e}")
-        return None
+        import traceback
+        traceback.print_exc()
+        return CashFlowChart()
 
 def create_net_worth_chart(net_worth_data):
     if not net_worth_data:
@@ -640,7 +860,7 @@ def generate_ai_insights(user_id):
     try:
         # Check if AI is available
         if not AI_AVAILABLE:
-            print("Google Generative AI library not installed - using fallback insights")
+            print("Google GenAI library not installed - using fallback insights")
             return generate_fallback_insights(
                 total_income,
                 total_expenses,
@@ -653,12 +873,26 @@ def generate_ai_insights(user_id):
             )
         
         # Configure Gemini
-        key = current_app.config['GEMINI_API_KEY']
-        genai.configure(api_key=key)
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        key = current_app.config.get('GEMINI_API_KEY')
+        if not key:
+            print("Gemini API key not configured - using fallback insights")
+            return generate_fallback_insights(
+                total_income,
+                total_expenses,
+                savings_rate,
+                top_categories,
+                budget_alerts,
+                portfolio_value,
+                total_gain,
+                best
+            )
+
+        client = genai.Client(api_key=key)
         
         # Generate insights
-        response = model.generate_content(summary_text + """
+        response = client.models.generate_content(
+            model='gemini-2.5-flash',
+            contents=summary_text + """
         
         Provide 3-4 specific, actionable financial insights for this Indian user. 
         Focus on:
@@ -668,10 +902,11 @@ def generate_ai_insights(user_id):
         4. Investment suggestions (if any data available)
         
         Format each insight as a separate paragraph with practical advice.
-        """)
+        """
+        )
         
         # Parse response into insights
-        insights_text = response.text
+        insights_text = response.text or ""
         insights = []
         
         # Split by paragraphs and create insight objects
@@ -726,7 +961,7 @@ def generate_ai_insights(user_id):
         return insights
         
     except Exception as e:
-        print(f"Gemini API error: {e}")
+        print(f"WARNING: Gemini AI insights failed: {type(e).__name__}")
         return generate_fallback_insights(
             total_income,
             total_expenses,

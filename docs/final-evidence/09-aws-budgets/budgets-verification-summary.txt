@@ -1,0 +1,19 @@
+AWS BUDGETS COST GUARDRAIL VERIFICATION
+=========================================
+Budget Name: finance-tracker-monthly-cost-guardrail
+Budget Limit: 20.0 USD
+Time Unit: MONTHLY
+Budget Type: COST
+Calculated Spend:
+- Actual Spend: 0.0 USD
+- Forecasted Spend: 0.788 USD
+
+CONFIGURED NOTIFICATIONS (4 Warning Thresholds):
+1. Actual Spend > 50.0% ($10.00 USD) -> arn:aws:sns:ap-south-1:AWS_ACCOUNT_ID_REDACTED:finance-tracker-alerts
+2. Actual Spend > 80.0% ($16.00 USD) -> arn:aws:sns:ap-south-1:AWS_ACCOUNT_ID_REDACTED:finance-tracker-alerts
+3. Actual Spend > 100.0% ($20.00 USD) -> arn:aws:sns:ap-south-1:AWS_ACCOUNT_ID_REDACTED:finance-tracker-alerts
+4. Forecasted Spend > 100.0% ($20.00 USD) -> arn:aws:sns:ap-south-1:AWS_ACCOUNT_ID_REDACTED:finance-tracker-alerts
+
+GOVERNANCE:
+- Manually managed in AWS Console (outside Terraform state) to prevent accidental state deletion.
+- Warning alerts only; zero automatic shutdown actions or resource suspension.

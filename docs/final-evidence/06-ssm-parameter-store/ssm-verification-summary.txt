@@ -1,0 +1,19 @@
+AWS SYSTEMS MANAGER PARAMETER STORE VERIFICATION
+=================================================
+Prefix: /finance-tracker/
+Total Parameters: 8
+
+PARAMETER CATALOG (Zero Secret Value Exposure):
+- Name: /finance-tracker/APPLICATION_URL    | Type: String       | Version: 1 | KeyId: alias/aws/ssm
+- Name: /finance-tracker/DB_HOST            | Type: String       | Version: 1 | KeyId: alias/aws/ssm
+- Name: /finance-tracker/DB_NAME            | Type: String       | Version: 1 | KeyId: alias/aws/ssm
+- Name: /finance-tracker/DB_PASSWORD        | Type: SecureString | Version: 1 | KeyId: alias/aws/ssm
+- Name: /finance-tracker/DB_PORT            | Type: String       | Version: 1 | KeyId: alias/aws/ssm
+- Name: /finance-tracker/DB_USER            | Type: String       | Version: 1 | KeyId: alias/aws/ssm
+- Name: /finance-tracker/S3_REPORT_BUCKET   | Type: String       | Version: 1 | KeyId: alias/aws/ssm
+- Name: /finance-tracker/SECRET_KEY         | Type: SecureString | Version: 1 | KeyId: alias/aws/ssm
+
+SECURITY VERIFICATION:
+- DB_PASSWORD is encrypted with AWS KMS as SecureString.
+- SECRET_KEY is encrypted with AWS KMS as SecureString.
+- No plain-text passwords or secret keys exist in the repository, Dockerfile, or image.

@@ -1,0 +1,20 @@
+AWS IAM EC2 LEAST-PRIVILEGE ROLE VERIFICATION
+==============================================
+Role Name: finance-tracker-ec2-role
+Role ARN: arn:aws:iam::AWS_ACCOUNT_ID_REDACTED:role/finance-tracker-ec2-role
+Trust Relationship: ec2.amazonaws.com
+Permissions Boundary: arn:aws:iam::AWS_ACCOUNT_ID_REDACTED:policy/FinanceTracker-EC2-Role-Permissions-Boundary
+
+ATTACHED AWS MANAGED POLICIES:
+1. AmazonSSMManagedInstanceCore (Enables secure Session Manager access without port 22 SSH)
+
+INLINE LEAST-PRIVILEGE POLICIES:
+1. finance-tracker-s3-reports:
+   Actions: s3:PutObject, s3:GetObject
+   Resource: arn:aws:s3:::finance-tracker-reports-S3_BUCKET_REDACTED/monthly-reports/*
+2. finance-tracker-cloudwatch-logs:
+   Actions: logs:CreateLogStream, logs:PutLogEvents
+   Resource: arn:aws:logs:ap-south-1:AWS_ACCOUNT_ID_REDACTED:log-group:/finance-tracker/app:*
+3. finance-tracker-ssm-parameters:
+   Actions: ssm:GetParameters, ssm:GetParameter, ssm:GetParametersByPath
+   Resource: arn:aws:ssm:ap-south-1:AWS_ACCOUNT_ID_REDACTED:parameter/finance-tracker/*

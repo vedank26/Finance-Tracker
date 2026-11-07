@@ -1,0 +1,21 @@
+AWS EC2 INSTANCE VERIFICATION EVIDENCE
+======================================
+Instance ID: EC2_INSTANCE_ID_REDACTED
+Instance Type: t3.micro
+State: running
+Public IP: PUBLIC_IP_REDACTED
+Private IP: PRIVATE_IP_REDACTED
+Availability Zone: ap-south-1a
+VPC ID: VPC_ID_REDACTED
+Subnet ID: PUBLIC_SUBNET_ID_REDACTED
+IAM Instance Profile: arn:aws:iam::AWS_ACCOUNT_ID_REDACTED:instance-profile/finance-tracker-ec2-profile
+
+STATUS CHECKS:
+System Status: ok (Details: [{'Name': 'reachability', 'Status': 'passed'}])
+Instance Status: ok (Details: [{'Name': 'reachability', 'Status': 'passed'}])
+
+APPLICATION RUNTIME:
+Docker Container: finance-tracker-app
+Docker Image: finance-tracker-web
+Host Port Mapping: 0.0.0.0:80 -> Container: 5000
+HTTP Status: 200 OK (Verified via live requests)

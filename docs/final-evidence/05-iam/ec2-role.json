@@ -1,0 +1,64 @@
+{
+  "Role": {
+    "Path": "/",
+    "RoleName": "finance-tracker-ec2-role",
+    "RoleId": "AROAYHBM36VPUPWUDUKBQ",
+    "Arn": "arn:aws:iam::AWS_ACCOUNT_ID_REDACTED:role/finance-tracker-ec2-role",
+    "CreateDate": "2026-10-31 09:01:51+00:00",
+    "AssumeRolePolicyDocument": {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Principal": {
+            "Service": "ec2.amazonaws.com"
+          },
+          "Action": "sts:AssumeRole"
+        }
+      ]
+    },
+    "Description": "IAM execution role for Finance Tracker EC2 container host",
+    "MaxSessionDuration": 3600,
+    "PermissionsBoundary": {
+      "PermissionsBoundaryType": "Policy",
+      "PermissionsBoundaryArn": "arn:aws:iam::AWS_ACCOUNT_ID_REDACTED:policy/FinanceTracker-EC2-Role-Permissions-Boundary"
+    },
+    "Tags": [
+      {
+        "Key": "ManagedBy",
+        "Value": "Terraform"
+      },
+      {
+        "Key": "Name",
+        "Value": "finance-tracker-ec2-role"
+      },
+      {
+        "Key": "Project",
+        "Value": "finance-tracker"
+      },
+      {
+        "Key": "Component",
+        "Value": "Application-Infrastructure"
+      },
+      {
+        "Key": "Environment",
+        "Value": "prototype"
+      }
+    ],
+    "RoleLastUsed": {
+      "LastUsedDate": "2026-11-01 17:01:04+00:00",
+      "Region": "ap-south-1"
+    }
+  },
+  "ResponseMetadata": {
+    "RequestId": "dd6acc07-53d3-40d7-abd5-b552a0d4b33c",
+    "HTTPStatusCode": 200,
+    "HTTPHeaders": {
+      "date": "Sun, 01 Nov 2026 17:09:32 GMT",
+      "x-amzn-requestid": "dd6acc07-53d3-40d7-abd5-b552a0d4b33c",
+      "content-type": "text/xml",
+      "content-length": "1863"
+    },
+    "RetryAttempts": 0
+  }
+}

@@ -1,0 +1,37 @@
+%% Figure 6: Infrastructure Observability and Notification Workflow
+flowchart TD
+    subgraph Observability["Operational Metrics & Logs Tier"]
+        direction TB
+        AppLogs["Gunicorn / Flask Container Stdout & Stderr"] -->|"Docker awslogs Driver"| CWLogGroup["CloudWatch Log Group<br/>/finance-tracker/app (7-day retention)"]
+        EC2Metrics["EC2 Instance Hypervisor Metrics"] -->|"1-Minute Basic Monitoring"| CPUMetric["CloudWatch Metric: CPUUtilization"]
+    end
+
+    subgraph AlarmTier["Threshold Evaluation Tier"]
+        direction TB
+        CPUMetric -->|"Evaluated every 300s (5 min)"| Alarm["CloudWatch Alarm: finance-tracker-ec2-high-cpu<br/>Condition: CPUUtilization > 80%<br/>Evaluation: 2 Consecutive 5-Min Periods (10 min total)"]
+        
+        BudgetMonitor["AWS Budgets Engine<br/>finance-tracker-monthly-cost-guardrail<br/>Limit: $20.00 USD"]
+        BudgetAlerts["Threshold Triggers:<br/>- 50% Actual ($10.00)<br/>- 80% Actual ($16.00)<br/>- 100% Actual ($20.00)<br/>- 100% Forecasted ($20.00)"]
+        BudgetMonitor --> BudgetAlerts
+    end
+
+    subgraph Messaging["Notification and Dispatch Tier"]
+        direction TB
+        Alarm -->|"State Transition: OK -> ALARM"| SNSTopic["Amazon SNS Topic<br/>finance-tracker-alerts<br/>(Policy: cloudwatch.amazonaws.com & budgets.amazonaws.com)"]
+        BudgetAlerts -->|"Threshold Exceeded Notification"| SNSTopic
+        
+        SNSTopic -->|"Protocol: email"| EmailDispatch["Amazon SES / SNS Mail Relays"]
+    end
+
+    subgraph Subscriber["Recipient Tier"]
+        EmailDispatch -->|"Delivers Email Alert"| AdminInbox["Administrator Mailbox<br/>(Subject: ALARM: finance-tracker-ec2-high-cpu / AWS Budget Alert)"]
+    end
+
+    classDef obs fill:#e0f7fa,stroke:#00838f,stroke-width:2px;
+    classDef alarm fill:#fff8e1,stroke:#fbc02d,stroke-width:2px;
+    classDef msg fill:#fce4ec,stroke:#c2185b,stroke-width:2px;
+    classDef sub fill:#f1f8e9,stroke:#558b2f,stroke-width:2px;
+    class Observability obs;
+    class AlarmTier alarm;
+    class Messaging msg;
+    class Subscriber sub;

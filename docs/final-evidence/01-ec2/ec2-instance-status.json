@@ -1,0 +1,58 @@
+{
+  "InstanceStatuses": [
+    {
+      "AvailabilityZone": "ap-south-1a",
+      "AvailabilityZoneId": "aps1-az1",
+      "Operator": {
+        "Managed": false,
+        "HiddenByDefault": false
+      },
+      "InstanceId": "EC2_INSTANCE_ID_REDACTED",
+      "InstanceState": {
+        "Code": 16,
+        "Name": "running"
+      },
+      "InstanceStatus": {
+        "Details": [
+          {
+            "Name": "reachability",
+            "Status": "passed"
+          }
+        ],
+        "Status": "ok"
+      },
+      "SystemStatus": {
+        "Details": [
+          {
+            "Name": "reachability",
+            "Status": "passed"
+          }
+        ],
+        "Status": "ok"
+      },
+      "AttachedEbsStatus": {
+        "Details": [
+          {
+            "Name": "reachability",
+            "Status": "passed"
+          }
+        ],
+        "Status": "ok"
+      }
+    }
+  ],
+  "ResponseMetadata": {
+    "RequestId": "c638e622-8177-4f0d-af11-050acfd0fc3e",
+    "HTTPStatusCode": 200,
+    "HTTPHeaders": {
+      "x-amzn-requestid": "c638e622-8177-4f0d-af11-050acfd0fc3e",
+      "cache-control": "no-cache, no-store",
+      "strict-transport-security": "max-age=31536000; includeSubDomains",
+      "content-type": "text/xml;charset=UTF-8",
+      "content-length": "954",
+      "date": "Sun, 01 Nov 2026 17:09:26 GMT",
+      "server": "AmazonEC2"
+    },
+    "RetryAttempts": 0
+  }
+}

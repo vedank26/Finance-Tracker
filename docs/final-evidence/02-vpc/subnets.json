@@ -1,0 +1,175 @@
+{
+  "Subnets": [
+    {
+      "AvailabilityZoneId": "aps1-az1",
+      "MapCustomerOwnedIpOnLaunch": false,
+      "OwnerId": "AWS_ACCOUNT_ID_REDACTED",
+      "AssignIpv6AddressOnCreation": false,
+      "Ipv6CidrBlockAssociationSet": [],
+      "Tags": [
+        {
+          "Key": "ManagedBy",
+          "Value": "Terraform"
+        },
+        {
+          "Key": "Name",
+          "Value": "finance-tracker-public-subnet"
+        },
+        {
+          "Key": "Tier",
+          "Value": "Public"
+        },
+        {
+          "Key": "Component",
+          "Value": "Application-Infrastructure"
+        },
+        {
+          "Key": "Project",
+          "Value": "finance-tracker"
+        },
+        {
+          "Key": "Environment",
+          "Value": "prototype"
+        }
+      ],
+      "SubnetArn": "arn:aws:ec2:ap-south-1:AWS_ACCOUNT_ID_REDACTED:subnet/PUBLIC_SUBNET_ID_REDACTED",
+      "EnableDns64": false,
+      "Ipv6Native": false,
+      "PrivateDnsNameOptionsOnLaunch": {
+        "HostnameType": "ip-name",
+        "EnableResourceNameDnsARecord": false,
+        "EnableResourceNameDnsAAAARecord": false
+      },
+      "BlockPublicAccessStates": {
+        "InternetGatewayBlockMode": "off"
+      },
+      "SubnetId": "PUBLIC_SUBNET_ID_REDACTED",
+      "State": "available",
+      "VpcId": "VPC_ID_REDACTED",
+      "CidrBlock": "10.0.1.0/24",
+      "AvailableIpAddressCount": 250,
+      "AvailabilityZone": "ap-south-1a",
+      "DefaultForAz": false,
+      "MapPublicIpOnLaunch": true
+    },
+    {
+      "AvailabilityZoneId": "aps1-az1",
+      "MapCustomerOwnedIpOnLaunch": false,
+      "OwnerId": "AWS_ACCOUNT_ID_REDACTED",
+      "AssignIpv6AddressOnCreation": false,
+      "Ipv6CidrBlockAssociationSet": [],
+      "Tags": [
+        {
+          "Key": "Component",
+          "Value": "Application-Infrastructure"
+        },
+        {
+          "Key": "ManagedBy",
+          "Value": "Terraform"
+        },
+        {
+          "Key": "Name",
+          "Value": "finance-tracker-private-subnet-a"
+        },
+        {
+          "Key": "Project",
+          "Value": "finance-tracker"
+        },
+        {
+          "Key": "Tier",
+          "Value": "Private"
+        },
+        {
+          "Key": "Environment",
+          "Value": "prototype"
+        }
+      ],
+      "SubnetArn": "arn:aws:ec2:ap-south-1:AWS_ACCOUNT_ID_REDACTED:subnet/PRIVATE_SUBNET_A_ID_REDACTED",
+      "EnableDns64": false,
+      "Ipv6Native": false,
+      "PrivateDnsNameOptionsOnLaunch": {
+        "HostnameType": "ip-name",
+        "EnableResourceNameDnsARecord": false,
+        "EnableResourceNameDnsAAAARecord": false
+      },
+      "BlockPublicAccessStates": {
+        "InternetGatewayBlockMode": "off"
+      },
+      "SubnetId": "PRIVATE_SUBNET_A_ID_REDACTED",
+      "State": "available",
+      "VpcId": "VPC_ID_REDACTED",
+      "CidrBlock": "10.0.10.0/24",
+      "AvailableIpAddressCount": 250,
+      "AvailabilityZone": "ap-south-1a",
+      "DefaultForAz": false,
+      "MapPublicIpOnLaunch": false
+    },
+    {
+      "AvailabilityZoneId": "aps1-az3",
+      "MapCustomerOwnedIpOnLaunch": false,
+      "OwnerId": "AWS_ACCOUNT_ID_REDACTED",
+      "AssignIpv6AddressOnCreation": false,
+      "Ipv6CidrBlockAssociationSet": [],
+      "Tags": [
+        {
+          "Key": "Environment",
+          "Value": "prototype"
+        },
+        {
+          "Key": "Name",
+          "Value": "finance-tracker-private-subnet-b"
+        },
+        {
+          "Key": "Project",
+          "Value": "finance-tracker"
+        },
+        {
+          "Key": "ManagedBy",
+          "Value": "Terraform"
+        },
+        {
+          "Key": "Component",
+          "Value": "Application-Infrastructure"
+        },
+        {
+          "Key": "Tier",
+          "Value": "Private"
+        }
+      ],
+      "SubnetArn": "arn:aws:ec2:ap-south-1:AWS_ACCOUNT_ID_REDACTED:subnet/PRIVATE_SUBNET_B_ID_REDACTED",
+      "EnableDns64": false,
+      "Ipv6Native": false,
+      "PrivateDnsNameOptionsOnLaunch": {
+        "HostnameType": "ip-name",
+        "EnableResourceNameDnsARecord": false,
+        "EnableResourceNameDnsAAAARecord": false
+      },
+      "BlockPublicAccessStates": {
+        "InternetGatewayBlockMode": "off"
+      },
+      "SubnetId": "PRIVATE_SUBNET_B_ID_REDACTED",
+      "State": "available",
+      "VpcId": "VPC_ID_REDACTED",
+      "CidrBlock": "10.0.11.0/24",
+      "AvailableIpAddressCount": 251,
+      "AvailabilityZone": "ap-south-1b",
+      "DefaultForAz": false,
+      "MapPublicIpOnLaunch": false
+    }
+  ],
+  "ResponseMetadata": {
+    "RequestId": "178bcee7-db13-4c0f-b562-f4e1b05e079d",
+    "HTTPStatusCode": 200,
+    "HTTPHeaders": {
+      "x-amzn-requestid": "178bcee7-db13-4c0f-b562-f4e1b05e079d",
+      "cache-control": "no-cache, no-store",
+      "strict-transport-security": "max-age=31536000; includeSubDomains",
+      "vary": "accept-encoding",
+      "content-type": "text/xml;charset=UTF-8",
+      "content-length": "4886",
+      "date": "Sun, 01 Nov 2026 17:09:27 GMT",
+      "server": "AmazonEC2"
+    },
+    "RetryAttempts": 0
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "logGroups": [
+    {
+      "logGroupName": "/finance-tracker/app",
+      "creationTime": 1793463482123,
+      "retentionInDays": 7,
+      "metricFilterCount": 0,
+      "arn": "arn:aws:logs:ap-south-1:AWS_ACCOUNT_ID_REDACTED:log-group:/finance-tracker/app:*",
+      "storedBytes": 0,
+      "logGroupClass": "STANDARD",
+      "logGroupArn": "arn:aws:logs:ap-south-1:AWS_ACCOUNT_ID_REDACTED:log-group:/finance-tracker/app",
+      "deletionProtectionEnabled": false,
+      "bearerTokenAuthenticationEnabled": false
+    }
+  ],
+  "ResponseMetadata": {
+    "RequestId": "2366b578-f74a-4f2c-8a52-8c99c06bd5a5",
+    "HTTPStatusCode": 200,
+    "HTTPHeaders": {
+      "x-amzn-requestid": "2366b578-f74a-4f2c-8a52-8c99c06bd5a5",
+      "content-type": "application/x-amz-json-1.1",
+      "content-length": "406",
+      "date": "Sun, 01 Nov 2026 17:09:42 GMT"
+    },
+    "RetryAttempts": 0
+  }
+}

@@ -1,0 +1,54 @@
+TERRAFORM INFRASTRUCTURE AS CODE VERIFICATION
+==============================================
+Working Directory: C:\Projects\Finance-tracker\terraform\app
+Terraform Workspace: default
+Terraform Version: 1.10.x
+Validation Status: Success! The configuration is valid.
+Managed Resources Count: 40 (Exact target: 40)
+
+MANAGED RESOURCES INVENTORY:
+ 1. aws_cloudwatch_log_group                      -> app_logs
+ 2. aws_cloudwatch_metric_alarm                   -> ec2_high_cpu
+ 3. aws_db_instance                               -> default
+ 4. aws_db_subnet_group                           -> rds
+ 5. aws_eip                                       -> app
+ 6. aws_iam_instance_profile                      -> ec2_profile
+ 7. aws_iam_role                                  -> ec2_role
+ 8. aws_iam_role_policy                           -> cloudwatch_logs
+ 9. aws_iam_role_policy                           -> s3_reports
+10. aws_iam_role_policy                           -> ssm_parameters
+11. aws_iam_role_policy_attachment                -> ssm_core
+12. aws_instance                                  -> app
+13. aws_internet_gateway                          -> gw
+14. aws_route_table                               -> private
+15. aws_route_table                               -> public
+16. aws_route_table_association                   -> private_a
+17. aws_route_table_association                   -> private_b
+18. aws_route_table_association                   -> public
+19. aws_s3_bucket                                 -> reports
+20. aws_s3_bucket_lifecycle_configuration         -> reports
+21. aws_s3_bucket_ownership_controls              -> reports
+22. aws_s3_bucket_public_access_block             -> reports
+23. aws_s3_bucket_server_side_encryption_configuration -> reports
+24. aws_security_group                            -> app
+25. aws_security_group                            -> db
+26. aws_sns_topic                                 -> alerts
+27. aws_sns_topic_policy                          -> alerts
+28. aws_sns_topic_subscription                    -> email
+29. aws_ssm_parameter                             -> application_url
+30. aws_ssm_parameter                             -> db_host
+31. aws_ssm_parameter                             -> db_name
+32. aws_ssm_parameter                             -> db_password
+33. aws_ssm_parameter                             -> db_port
+34. aws_ssm_parameter                             -> db_user
+35. aws_ssm_parameter                             -> s3_report_bucket
+36. aws_ssm_parameter                             -> secret_key
+37. aws_subnet                                    -> private_a
+38. aws_subnet                                    -> private_b
+39. aws_subnet                                    -> public
+40. aws_vpc                                       -> main
+
+DRIFT VERIFICATION:
+- Exactly 40 managed resources remain intact.
+- Zero Terraform drift introduced by Docker application deployment.
+- AWS Budget ($20) intentionally preserved outside Terraform.

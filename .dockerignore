@@ -1,0 +1,103 @@
+# Version control
+.git
+.gitignore
+.gitattributes
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Local databases, instance directory, and database backups
+instance/
+*.db
+*.sqlite3
+*.db-shm
+*.db-wal
+*.bak
+
+# Environment and secrets files (never bake into images)
+.env
+.env.*
+
+# AWS configuration and downloaded IAM credential files
+.aws/
+aws/
+*.csv
+*accessKeys*.csv
+*credentials*.csv
+*credential*.csv
+*credentials*.json
+
+# Private keys, certificates, and authentication material
+*.pem
+*.key
+*.pkcs12
+*.p12
+*.crt
+id_rsa*
+id_ed25519*
+known_hosts*
+
+# Secret, token, and credential files
+*.secret
+*.token
+*.credential
+*.credentials
+
+# Uploaded user files and private staging data
+uploads/*
+!uploads/.gitkeep
+
+# Python bytecode and caches
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Logs
+*.log
+logs/
+
+# IDE and OS artifacts
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+ehthumbs.db
+
+# Docker files
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# Temporary / testing scripts
+clean_cache.py
+create_test_data.py
+update_db.py
+sample_data.py
+verify_*.py
+audit_*.py
+fix_*.py
+debug_*.py
+setup_*.py
+
+# Terraform infrastructure files, state, plans, and variables
+terraform/
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+*.tfplan
+*.plan
+*.tfvars
+*.tfvars.json
+crash.log
+crash.*.log
+
+# Local test and audit scripts
+scratch/

@@ -1,0 +1,30 @@
+%% Figure 2: Application Request and Response Lifecycle
+sequenceDiagram
+    autonumber
+    actor User as End User (Browser)
+    participant IGW as Internet Gateway
+    participant SG as EC2 Security Group (Port 80)
+    participant Host as EC2 Host (Port 80)
+    participant Docker as Docker Container (Port 5000)
+    participant Gunicorn as Gunicorn WSGI Server
+    participant Flask as Flask Application (run:app)
+    participant RDS as Amazon RDS MySQL (Port 3306)
+
+    User->>IGW: HTTP GET /dashboard (TCP 80)
+    IGW->>SG: Inbound Packet Inspection
+    SG->>Host: Allow Inbound Port 80 Traffic
+    Host->>Docker: Port Forward 0.0.0.0:80 -> 5000/tcp
+    Docker->>Gunicorn: Forward to WSGI Worker Process
+    Gunicorn->>Flask: WSGI Environment & Request Dispatch
+
+    Note over Flask: Session Validation & Route Handling (/dashboard)
+    Flask->>RDS: SQL Query: SELECT transactions, budgets FROM user_id
+    Note over RDS: Execute query inside Private Subnet (Port 3306)
+    RDS-->>Flask: Return Financial Query Result Set
+
+    Note over Flask: Compute Income ($1,200), Expenses ($205), Net ($995)<br/>Render HTML via Jinja2 Template
+    Flask-->>Gunicorn: HTTP 200 OK + Rendered HTML Payload
+    Gunicorn-->>Docker: Output Stream
+    Docker-->>Host: Bridged Response
+    Host-->>IGW: Outbound Response Packet
+    IGW-->>User: Render Dashboard in Browser Window

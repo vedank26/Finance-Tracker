@@ -1,0 +1,17 @@
+DOCKER APPLICATION & CONTAINERIZATION EVIDENCE
+==============================================
+Production Image: finance-tracker-web
+Production Container: finance-tracker-app
+Systemd Service: finance-tracker.service (active, enabled)
+Gunicorn Command: gunicorn --bind 0.0.0.0:5000 --workers 2 --timeout 120 --access-logfile - --error-logfile - run:app
+Port Mapping: 80 (Host) -> 5000 (Container)
+
+IMAGE SECURITY VERIFICATION:
+- Build Context strictly ignores secrets via .dockerignore:
+  * .env
+  * refresh-env.sh
+  * *.pem / *.key
+  * terraform/
+  * .git/
+- Multi-stage / clean build verified: zero credentials baked into image layers.
+- Runtime environment variables injected dynamically at container launch from /etc/finance-tracker/finance-tracker.env

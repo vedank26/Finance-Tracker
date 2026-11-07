@@ -1,0 +1,153 @@
+{
+  "RouteTables": [
+    {
+      "Associations": [
+        {
+          "Main": true,
+          "RouteTableAssociationId": "rtbassoc-0f374155254cd618b",
+          "RouteTableId": "rtb-0488f086408b80bfd",
+          "AssociationState": {
+            "State": "associated"
+          }
+        }
+      ],
+      "PropagatingVgws": [],
+      "RouteTableId": "rtb-0488f086408b80bfd",
+      "Routes": [
+        {
+          "DestinationCidrBlock": "10.0.0.0/16",
+          "GatewayId": "local",
+          "Origin": "CreateRouteTable",
+          "State": "active"
+        }
+      ],
+      "Tags": [],
+      "VpcId": "VPC_ID_REDACTED",
+      "OwnerId": "AWS_ACCOUNT_ID_REDACTED"
+    },
+    {
+      "Associations": [
+        {
+          "Main": false,
+          "RouteTableAssociationId": "rtbassoc-0a71524db16bb1f65",
+          "RouteTableId": "rtb-0a394d1a5f500d9e8",
+          "SubnetId": "PRIVATE_SUBNET_B_ID_REDACTED",
+          "AssociationState": {
+            "State": "associated"
+          }
+        },
+        {
+          "Main": false,
+          "RouteTableAssociationId": "rtbassoc-082d0cd3ff75850c1",
+          "RouteTableId": "rtb-0a394d1a5f500d9e8",
+          "SubnetId": "PRIVATE_SUBNET_A_ID_REDACTED",
+          "AssociationState": {
+            "State": "associated"
+          }
+        }
+      ],
+      "PropagatingVgws": [],
+      "RouteTableId": "rtb-0a394d1a5f500d9e8",
+      "Routes": [
+        {
+          "DestinationCidrBlock": "10.0.0.0/16",
+          "GatewayId": "local",
+          "Origin": "CreateRouteTable",
+          "State": "active"
+        }
+      ],
+      "Tags": [
+        {
+          "Key": "Project",
+          "Value": "finance-tracker"
+        },
+        {
+          "Key": "ManagedBy",
+          "Value": "Terraform"
+        },
+        {
+          "Key": "Component",
+          "Value": "Application-Infrastructure"
+        },
+        {
+          "Key": "Name",
+          "Value": "finance-tracker-private-rt"
+        },
+        {
+          "Key": "Environment",
+          "Value": "prototype"
+        }
+      ],
+      "VpcId": "VPC_ID_REDACTED",
+      "OwnerId": "AWS_ACCOUNT_ID_REDACTED"
+    },
+    {
+      "Associations": [
+        {
+          "Main": false,
+          "RouteTableAssociationId": "rtbassoc-0a00b392833be7254",
+          "RouteTableId": "rtb-058c34279083bd7c7",
+          "SubnetId": "PUBLIC_SUBNET_ID_REDACTED",
+          "AssociationState": {
+            "State": "associated"
+          }
+        }
+      ],
+      "PropagatingVgws": [],
+      "RouteTableId": "rtb-058c34279083bd7c7",
+      "Routes": [
+        {
+          "DestinationCidrBlock": "10.0.0.0/16",
+          "GatewayId": "local",
+          "Origin": "CreateRouteTable",
+          "State": "active"
+        },
+        {
+          "DestinationCidrBlock": "0.0.0.0/0",
+          "GatewayId": "igw-0dba5d2981008414a",
+          "Origin": "CreateRoute",
+          "State": "active"
+        }
+      ],
+      "Tags": [
+        {
+          "Key": "Environment",
+          "Value": "prototype"
+        },
+        {
+          "Key": "Component",
+          "Value": "Application-Infrastructure"
+        },
+        {
+          "Key": "ManagedBy",
+          "Value": "Terraform"
+        },
+        {
+          "Key": "Name",
+          "Value": "finance-tracker-public-rt"
+        },
+        {
+          "Key": "Project",
+          "Value": "finance-tracker"
+        }
+      ],
+      "VpcId": "VPC_ID_REDACTED",
+      "OwnerId": "AWS_ACCOUNT_ID_REDACTED"
+    }
+  ],
+  "ResponseMetadata": {
+    "RequestId": "0a8e82f9-5e25-4646-a960-91bfcfae5c21",
+    "HTTPStatusCode": 200,
+    "HTTPHeaders": {
+      "x-amzn-requestid": "0a8e82f9-5e25-4646-a960-91bfcfae5c21",
+      "cache-control": "no-cache, no-store",
+      "strict-transport-security": "max-age=31536000; includeSubDomains",
+      "vary": "accept-encoding",
+      "content-type": "text/xml;charset=UTF-8",
+      "content-length": "3158",
+      "date": "Sun, 01 Nov 2026 17:09:27 GMT",
+      "server": "AmazonEC2"
+    },
+    "RetryAttempts": 0
+  }
+}

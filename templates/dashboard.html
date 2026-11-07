@@ -45,7 +45,7 @@
 <script>
 // Chart configuration
 let chartConfigs = {
-    'cash-flow-chart': { data: {% if cash_flow_chart is not none %}{{ cash_flow_chart|safe }}{% else %}null{% endif %}, currentType: 'bar' },
+    'cash-flow-chart': { data: {% if cash_flow_chart and cash_flow_chart.data %}{{ cash_flow_chart.data|tojson }}{% elif cash_flow_chart %}{{ cash_flow_chart|tojson }}{% else %}null{% endif %}, currentType: 'bar' },
     'net-worth-chart': { data: {% if net_worth_chart is not none %}{{ net_worth_chart|safe }}{% else %}null{% endif %}, currentType: 'line' },
     'portfolio-chart': { data: {% if portfolio_chart is not none %}{{ portfolio_chart|safe }}{% else %}null{% endif %}, currentType: 'pie' }
 };
@@ -53,7 +53,7 @@ let chartConfigs = {
 // Toggle chart types
 function toggleChartType(chartId, type) {
     const config = chartConfigs[chartId];
-    if (!config) return;
+    if (!config || !config.data) return;
 
     config.currentType = type;
     const data = JSON.parse(JSON.stringify(config.data)); // Deep copy
@@ -65,6 +65,33 @@ function toggleChartType(chartId, type) {
             data[0].marker = { color: data[0].marker.colors };
         } else {
             data[0].type = 'pie';
+        }
+    } else if (chartId === 'cash-flow-chart') {
+        if (type === 'line') {
+            data.forEach(trace => {
+                trace.type = 'scatter';
+                trace.mode = 'lines+markers';
+                trace.line = { shape: 'spline', width: 3 };
+                trace.marker = { size: 7, color: trace.marker ? trace.marker.color : undefined };
+            });
+        } else {
+            data.forEach(trace => {
+                trace.type = 'bar';
+                trace.mode = undefined;
+            });
+        }
+
+        // Update button visual states
+        const barBtn = document.getElementById('btn-cash-flow-bar');
+        const lineBtn = document.getElementById('btn-cash-flow-line');
+        if (barBtn && lineBtn) {
+            if (type === 'bar') {
+                barBtn.className = 'px-3 py-1 bg-white text-blue-700 font-semibold rounded-lg text-sm shadow-sm transition-all';
+                lineBtn.className = 'px-3 py-1 text-gray-600 hover:text-gray-900 rounded-lg text-sm transition-all';
+            } else {
+                barBtn.className = 'px-3 py-1 text-gray-600 hover:text-gray-900 rounded-lg text-sm transition-all';
+                lineBtn.className = 'px-3 py-1 bg-white text-blue-700 font-semibold rounded-lg text-sm shadow-sm transition-all';
+            }
         }
     } else {
         data.forEach(trace => {
@@ -80,7 +107,7 @@ function toggleChartType(chartId, type) {
     Plotly.react(chartId, data, { 
         ...getLayoutOptions(chartId, type),
         hoverlabel: { bgcolor: 'white', font: { color: 'black' } }
-    });
+    }, { responsive: true, displayModeBar: false });
 }
 
 // Enhanced layout options
@@ -88,12 +115,41 @@ function getLayoutOptions(chartId, type) {
     const baseLayout = {
         paper_bgcolor: 'rgba(0,0,0,0)',
         plot_bgcolor: 'rgba(0,0,0,0)',
-        font: { color: '#374151' },
+        font: { color: '#374151', family: 'system-ui, -apple-system, sans-serif' },
         margin: { t: 30, r: 30, b: 50, l: 50 },
         xaxis: { gridcolor: 'rgba(0,0,0,0.1)' },
         yaxis: { gridcolor: 'rgba(0,0,0,0.1)' },
         showlegend: chartId === 'portfolio-chart' && type === 'pie'
     };
+
+    if (chartId === 'cash-flow-chart') {
+        baseLayout.barmode = 'group';
+        baseLayout.bargap = 0.35;
+        baseLayout.bargroupgap = 0.15;
+        baseLayout.xaxis = {
+            type: 'category',
+            gridcolor: 'rgba(0,0,0,0.04)',
+            tickfont: { size: 12, color: '#4B5563' },
+            fixedrange: true
+        };
+        baseLayout.yaxis = {
+            tickprefix: '₹',
+            separatethousands: true,
+            gridcolor: 'rgba(0,0,0,0.06)',
+            tickfont: { size: 12, color: '#4B5563' },
+            fixedrange: true
+        };
+        baseLayout.showlegend = true;
+        baseLayout.legend = {
+            orientation: 'h',
+            yanchor: 'bottom',
+            y: -0.28,
+            xanchor: 'center',
+            x: 0.5,
+            font: { size: 12, color: '#374151' }
+        };
+        baseLayout.margin = { t: 20, r: 20, b: 65, l: 65 };
+    }
 
     if (chartId === 'portfolio-chart' && type === 'bar') {
         baseLayout.xaxis = { ...baseLayout.xaxis, tickangle: -45 };
@@ -104,20 +160,32 @@ function getLayoutOptions(chartId, type) {
 
 // Initialize charts
 document.addEventListener('DOMContentLoaded', function() {
-    {% if cash_flow_chart is not none %}
-    Plotly.newPlot('cash-flow-chart', chartConfigs['cash-flow-chart'].data, 
-        getLayoutOptions('cash-flow-chart', 'bar'));
+    {% if cash_flow_chart and (cash_flow_chart.has_data if cash_flow_chart.has_data is defined else cash_flow_chart) %}
+    if (chartConfigs['cash-flow-chart'] && chartConfigs['cash-flow-chart'].data && chartConfigs['cash-flow-chart'].data.length > 0) {
+        Plotly.newPlot('cash-flow-chart', chartConfigs['cash-flow-chart'].data,
+            getLayoutOptions('cash-flow-chart', 'bar'), { responsive: true, displayModeBar: false });
+    }
     {% endif %}
 
     {% if net_worth_chart is not none %}
     Plotly.newPlot('net-worth-chart', chartConfigs['net-worth-chart'].data, 
-        getLayoutOptions('net-worth-chart', 'line'));
+        getLayoutOptions('net-worth-chart', 'line'), { responsive: true, displayModeBar: false });
     {% endif %}
 
     {% if portfolio_chart is not none %}
     Plotly.newPlot('portfolio-chart', chartConfigs['portfolio-chart'].data, 
-        getLayoutOptions('portfolio-chart', 'pie'));
+        getLayoutOptions('portfolio-chart', 'pie'), { responsive: true, displayModeBar: false });
     {% endif %}
+});
+
+// Window resize handler for chart responsiveness
+window.addEventListener('resize', function() {
+    ['cash-flow-chart', 'net-worth-chart', 'portfolio-chart'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el && el.data) {
+            Plotly.Plots.resize(el);
+        }
+    });
 });
 
 // Enhanced file upload handler
@@ -128,6 +196,10 @@ function handleFileUpload(type, input) {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('type', type);
+    formData.append('data_type', type);
+    if (typeof getCSRFToken === 'function') {
+        formData.append('csrf_token', getCSRFToken());
+    }
 
     // Show loading state
     const originalText = input.parentElement.querySelector('h3').textContent;
@@ -136,6 +208,9 @@ function handleFileUpload(type, input) {
 
     fetch('/upload', {
         method: 'POST',
+        headers: {
+            'X-CSRFToken': typeof getCSRFToken === 'function' ? getCSRFToken() : ''
+        },
         body: formData,
         credentials: 'include'
     })

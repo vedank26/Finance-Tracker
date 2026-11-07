@@ -1,0 +1,59 @@
+%% Figure 1: AWS Cloud - Finance Tracker Main System Architecture
+graph TB
+    subgraph Client["External Access Tier"]
+        User["End User (Browser / Client)"]
+        DevOps["DevOps Engineer (Terraform CLI)"]
+    end
+
+    subgraph AWS["AWS Cloud (ap-south-1 Mumbai)"]
+        subgraph VPC["Virtual Private Cloud (10.0.0.0/16)"]
+            IGW["Internet Gateway (IGW)"]
+
+            subgraph PublicSubnet["Public Subnet A (10.0.1.0/24)"]
+                subgraph EC2["Amazon EC2 - t3.micro (Linux 2023)"]
+                    subgraph Docker["Docker Container: finance-tracker-app"]
+                        Gunicorn["Gunicorn WSGI (2 Workers)"]
+                        Flask["Flask Application (Port 5000)"]
+                    end
+                end
+            end
+
+            subgraph PrivateDBTier["Private Database Tier (No Internet Access)"]
+                subgraph PrivateSubnets["Private DB Subnet Group (AZ-a & AZ-b)"]
+                    RDS[("Amazon RDS - MySQL 8.0<br/>(finance-tracker-mysql / db.t3.micro)<br/>KMS Encrypted Storage")]
+                end
+            end
+        end
+
+        subgraph ManagedServices["AWS Managed Services"]
+            S3[("Amazon S3 Reports Bucket<br/>(finance-tracker-reports-*)<br/>SSE-S3 AES256 | Block Public Access")]
+            SSM["AWS Systems Manager<br/>Parameter Store (/finance-tracker/*)<br/>SecureString: DB_PASSWORD, SECRET_KEY"]
+            IAM["AWS IAM EC2 Instance Role<br/>(finance-tracker-ec2-role)<br/>Least Privilege: S3, SSM, CloudWatch"]
+            CWLogs["CloudWatch Logs<br/>(/finance-tracker/app)<br/>7-Day Retention"]
+            CWAlarm["CloudWatch CPU Alarm<br/>(finance-tracker-ec2-high-cpu)<br/>CPU > 80% (2x 5-min)"]
+            Budgets["AWS Budgets<br/>($20.00 USD Monthly Cost Guardrail)<br/>50%, 80%, 100% Actual / 100% Forecast"]
+            SNS["Amazon SNS Topic<br/>(finance-tracker-alerts)"]
+            AdminEmail["Administrator Email<br/>(Subscribed & Verified)"]
+        end
+    end
+
+    %% Communication Flows
+    User -->|"1. HTTP Port 80"| IGW
+    IGW --> PublicSubnet
+    PublicSubnet -->|"Port Forward 80 -> 5000"| Gunicorn
+    Gunicorn --> Flask
+
+    Flask -->|"2. MySQL TCP 3306 (Private VPC)"| RDS
+    EC2 -.->|"3. Assumes Instance Profile"| IAM
+    Flask -->|"4. Uploads Reports (SSE-S3)"| S3
+    Flask -->|"5. Fetches Secrets at Boot"| SSM
+    Docker -->|"6. Application Logs (stdout/stderr)"| CWLogs
+
+    CWLogs -.-> CWAlarm
+    CWAlarm -->|"7. CPU Alarm Trigger"| SNS
+    Budgets -->|"8. Cost Threshold Alert"| SNS
+    SNS -->|"9. Email Alert Delivery"| AdminEmail
+
+    DevOps -.->|"IaC Provisioning (40 Managed Resources)"| VPC
+    DevOps -.->|"IaC Provisioning"| RDS
+    DevOps -.->|"IaC Provisioning"| ManagedServices

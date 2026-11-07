@@ -1,0 +1,61 @@
+{
+  "Vpcs": [
+    {
+      "OwnerId": "AWS_ACCOUNT_ID_REDACTED",
+      "InstanceTenancy": "default",
+      "CidrBlockAssociationSet": [
+        {
+          "AssociationId": "vpc-cidr-assoc-07efad20338280ad2",
+          "CidrBlock": "10.0.0.0/16",
+          "CidrBlockState": {
+            "State": "associated"
+          }
+        }
+      ],
+      "IsDefault": false,
+      "Tags": [
+        {
+          "Key": "ManagedBy",
+          "Value": "Terraform"
+        },
+        {
+          "Key": "Component",
+          "Value": "Application-Infrastructure"
+        },
+        {
+          "Key": "Name",
+          "Value": "finance-tracker-vpc"
+        },
+        {
+          "Key": "Project",
+          "Value": "finance-tracker"
+        },
+        {
+          "Key": "Environment",
+          "Value": "prototype"
+        }
+      ],
+      "BlockPublicAccessStates": {
+        "InternetGatewayBlockMode": "off"
+      },
+      "VpcId": "VPC_ID_REDACTED",
+      "State": "available",
+      "CidrBlock": "10.0.0.0/16",
+      "DhcpOptionsId": "dopt-0966dd3ba0fbd886d"
+    }
+  ],
+  "ResponseMetadata": {
+    "RequestId": "3f2f04ed-1dde-48a7-916f-a0e9267eadc7",
+    "HTTPStatusCode": 200,
+    "HTTPHeaders": {
+      "x-amzn-requestid": "3f2f04ed-1dde-48a7-916f-a0e9267eadc7",
+      "cache-control": "no-cache, no-store",
+      "strict-transport-security": "max-age=31536000; includeSubDomains",
+      "content-type": "text/xml;charset=UTF-8",
+      "content-length": "1168",
+      "date": "Sun, 01 Nov 2026 17:09:27 GMT",
+      "server": "AmazonEC2"
+    },
+    "RetryAttempts": 0
+  }
+}

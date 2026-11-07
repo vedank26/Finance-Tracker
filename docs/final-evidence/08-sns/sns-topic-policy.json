@@ -1,0 +1,37 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowCloudWatchAlarmsToPublish",
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "cloudwatch.amazonaws.com"
+      },
+      "Action": "sns:Publish",
+      "Resource": "arn:aws:sns:ap-south-1:AWS_ACCOUNT_ID_REDACTED:finance-tracker-alerts",
+      "Condition": {
+        "StringEquals": {
+          "aws:SourceAccount": "AWS_ACCOUNT_ID_REDACTED",
+          "aws:SourceArn": "arn:aws:cloudwatch:ap-south-1:AWS_ACCOUNT_ID_REDACTED:alarm:finance-tracker-ec2-high-cpu"
+        }
+      }
+    },
+    {
+      "Sid": "AllowBudgetsToPublish",
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "budgets.amazonaws.com"
+      },
+      "Action": "sns:Publish",
+      "Resource": "arn:aws:sns:ap-south-1:AWS_ACCOUNT_ID_REDACTED:finance-tracker-alerts",
+      "Condition": {
+        "StringEquals": {
+          "aws:SourceAccount": "AWS_ACCOUNT_ID_REDACTED"
+        },
+        "ArnEquals": {
+          "aws:SourceArn": "arn:aws:budgets::AWS_ACCOUNT_ID_REDACTED:budget/finance-tracker-monthly-cost-guardrail"
+        }
+      }
+    }
+  ]
+}

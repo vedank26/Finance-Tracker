@@ -1,0 +1,200 @@
+{
+  "Reservations": [
+    {
+      "ReservationId": "r-008fc82e7914c0414",
+      "OwnerId": "AWS_ACCOUNT_ID_REDACTED",
+      "Groups": [],
+      "Instances": [
+        {
+          "Architecture": "x86_64",
+          "BlockDeviceMappings": [
+            {
+              "DeviceName": "/dev/xvda",
+              "Ebs": {
+                "AttachTime": "2026-10-31 18:12:46+00:00",
+                "DeleteOnTermination": true,
+                "Status": "attached",
+                "VolumeId": "vol-0a07ca7e92f5f1132",
+                "EbsCardIndex": 0
+              }
+            }
+          ],
+          "ClientToken": "terraform-20261031181244459300000001",
+          "EbsOptimized": false,
+          "EnaSupport": true,
+          "Hypervisor": "xen",
+          "IamInstanceProfile": {
+            "Arn": "arn:aws:iam::AWS_ACCOUNT_ID_REDACTED:instance-profile/finance-tracker-ec2-profile",
+            "Id": "AIPAYHBM36VP2NNAURNSK"
+          },
+          "NetworkInterfaces": [
+            {
+              "Association": {
+                "IpOwnerId": "AWS_ACCOUNT_ID_REDACTED",
+                "PublicDnsName": "ec2-13-205-190-102.ap-south-1.compute.amazonaws.com",
+                "PublicIp": "PUBLIC_IP_REDACTED"
+              },
+              "Attachment": {
+                "AttachTime": "2026-10-31 18:12:45+00:00",
+                "AttachmentId": "eni-attach-08fd3308fa6d86d6c",
+                "DeleteOnTermination": true,
+                "DeviceIndex": 0,
+                "Status": "attached",
+                "NetworkCardIndex": 0
+              },
+              "Description": "",
+              "Groups": [
+                {
+                  "GroupId": "APP_SG_ID_REDACTED",
+                  "GroupName": "finance-tracker-app-sg"
+                }
+              ],
+              "Ipv6Addresses": [],
+              "MacAddress": "02:ff:e2:6d:6c:99",
+              "NetworkInterfaceId": "eni-094b4b79b06705abd",
+              "OwnerId": "AWS_ACCOUNT_ID_REDACTED",
+              "PrivateDnsName": "ip-10-0-1-197.ap-south-1.compute.internal",
+              "PrivateIpAddress": "PRIVATE_IP_REDACTED",
+              "PrivateIpAddresses": [
+                {
+                  "Association": {
+                    "IpOwnerId": "AWS_ACCOUNT_ID_REDACTED",
+                    "PublicDnsName": "ec2-13-205-190-102.ap-south-1.compute.amazonaws.com",
+                    "PublicIp": "PUBLIC_IP_REDACTED"
+                  },
+                  "Primary": true,
+                  "PrivateDnsName": "ip-10-0-1-197.ap-south-1.compute.internal",
+                  "PrivateIpAddress": "PRIVATE_IP_REDACTED"
+                }
+              ],
+              "SourceDestCheck": true,
+              "Status": "in-use",
+              "SubnetId": "PUBLIC_SUBNET_ID_REDACTED",
+              "VpcId": "VPC_ID_REDACTED",
+              "InterfaceType": "interface",
+              "Operator": {
+                "Managed": false
+              }
+            }
+          ],
+          "RootDeviceName": "/dev/xvda",
+          "RootDeviceType": "ebs",
+          "SecurityGroups": [
+            {
+              "GroupId": "APP_SG_ID_REDACTED",
+              "GroupName": "finance-tracker-app-sg"
+            }
+          ],
+          "SourceDestCheck": true,
+          "Tags": [
+            {
+              "Key": "Name",
+              "Value": "finance-tracker-app-host"
+            },
+            {
+              "Key": "Environment",
+              "Value": "prototype"
+            },
+            {
+              "Key": "ManagedBy",
+              "Value": "Terraform"
+            },
+            {
+              "Key": "Component",
+              "Value": "Application-Infrastructure"
+            },
+            {
+              "Key": "Project",
+              "Value": "finance-tracker"
+            }
+          ],
+          "VirtualizationType": "hvm",
+          "CpuOptions": {
+            "CoreCount": 1,
+            "ThreadsPerCore": 2
+          },
+          "CapacityReservationSpecification": {
+            "CapacityReservationPreference": "open"
+          },
+          "HibernationOptions": {
+            "Configured": false
+          },
+          "MetadataOptions": {
+            "State": "applied",
+            "HttpTokens": "required",
+            "HttpPutResponseHopLimit": 2,
+            "HttpEndpoint": "enabled",
+            "HttpProtocolIpv6": "disabled",
+            "InstanceMetadataTags": "disabled"
+          },
+          "EnclaveOptions": {
+            "Enabled": false
+          },
+          "BootMode": "uefi-preferred",
+          "PlatformDetails": "Linux/UNIX",
+          "UsageOperation": "RunInstances",
+          "UsageOperationUpdateTime": "2026-10-31 18:12:45+00:00",
+          "PrivateDnsNameOptions": {
+            "HostnameType": "ip-name",
+            "EnableResourceNameDnsARecord": false,
+            "EnableResourceNameDnsAAAARecord": false
+          },
+          "MaintenanceOptions": {
+            "AutoRecovery": "default",
+            "RebootMigration": "default"
+          },
+          "CurrentInstanceBootMode": "uefi",
+          "NetworkPerformanceOptions": {
+            "BandwidthWeighting": "default"
+          },
+          "Operator": {
+            "Managed": false,
+            "HiddenByDefault": false
+          },
+          "SecondaryInterfaces": [],
+          "InstanceId": "EC2_INSTANCE_ID_REDACTED",
+          "ImageId": "ami-00531e78dd10fb3be",
+          "State": {
+            "Code": 16,
+            "Name": "running"
+          },
+          "PrivateDnsName": "ip-10-0-1-197.ap-south-1.compute.internal",
+          "PublicDnsName": "ec2-13-205-190-102.ap-south-1.compute.amazonaws.com",
+          "StateTransitionReason": "",
+          "AmiLaunchIndex": 0,
+          "ProductCodes": [],
+          "InstanceType": "t3.micro",
+          "LaunchTime": "2026-10-31 18:12:45+00:00",
+          "Placement": {
+            "AvailabilityZoneId": "aps1-az1",
+            "GroupName": "",
+            "Tenancy": "default",
+            "AvailabilityZone": "ap-south-1a"
+          },
+          "Monitoring": {
+            "State": "disabled"
+          },
+          "SubnetId": "PUBLIC_SUBNET_ID_REDACTED",
+          "VpcId": "VPC_ID_REDACTED",
+          "PrivateIpAddress": "PRIVATE_IP_REDACTED",
+          "PublicIpAddress": "PUBLIC_IP_REDACTED"
+        }
+      ]
+    }
+  ],
+  "ResponseMetadata": {
+    "RequestId": "85e5c52b-163e-4b16-8045-aaa078bd908b",
+    "HTTPStatusCode": 200,
+    "HTTPHeaders": {
+      "x-amzn-requestid": "85e5c52b-163e-4b16-8045-aaa078bd908b",
+      "cache-control": "no-cache, no-store",
+      "strict-transport-security": "max-age=31536000; includeSubDomains",
+      "vary": "accept-encoding",
+      "content-type": "text/xml;charset=UTF-8",
+      "content-length": "5906",
+      "date": "Sun, 01 Nov 2026 17:09:26 GMT",
+      "server": "AmazonEC2"
+    },
+    "RetryAttempts": 0
+  }
+}

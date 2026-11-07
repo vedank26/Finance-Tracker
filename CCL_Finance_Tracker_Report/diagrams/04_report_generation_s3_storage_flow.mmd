@@ -1,0 +1,29 @@
+%% Figure 4: Financial Report Generation and S3 Pre-Signed URL Download Flow
+sequenceDiagram
+    autonumber
+    actor User as Authenticated User
+    participant App as Flask Application (app/reports.py)
+    participant RDS as Amazon RDS MySQL
+    participant IAM as EC2 IAM Instance Profile
+    participant S3 as Amazon S3 Bucket (SSE-S3)
+
+    User->>App: POST /reports/export (Month: 2026-11)
+    App->>RDS: SELECT * FROM transaction WHERE user_id=? AND month=?
+    RDS-->>App: Return user monthly transaction set
+    
+    Note over App: Aggregate totals, compute category summaries,<br/>and construct CSV payload in memory
+    
+    App->>IAM: Request temporary AWS credentials via IMDSv2
+    IAM-->>App: Return STS temporary security token (finance-tracker-ec2-role)
+    
+    Note over App: Construct S3 key:<br/>monthly-reports/user-{id}/{yyyy-mm}/report-{uuid}.csv
+    
+    App->>S3: PutObject (SSE-S3 AES256, ContentType=text/csv)
+    S3-->>App: 200 OK (ETag, ServerSideEncryption: AES256)
+    
+    Note over App: Generate Pre-Signed Download URL (ExpiresIn = 900s / 15 mins)
+    App-->>User: HTTP 302 Redirect to Pre-Signed S3 Download Link
+    
+    User->>S3: GET /monthly-reports/user-1/...?AWSAccessKeyId=...&Signature=...
+    Note over S3: Verify HMAC Signature, Expiry Timestamp (< 15 min), and Object Key
+    S3-->>User: 200 OK (Stream CSV file to User Device)

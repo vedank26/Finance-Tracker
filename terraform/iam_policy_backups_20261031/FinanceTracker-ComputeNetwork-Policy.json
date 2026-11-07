@@ -1,0 +1,222 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "EC2RunInstancesInstanceAndVolume",
+      "Effect": "Allow",
+      "Action": "ec2:RunInstances",
+      "Resource": [
+        "arn:aws:ec2:ap-south-1:AWS_ACCOUNT_ID_REDACTED:instance/*",
+        "arn:aws:ec2:ap-south-1:AWS_ACCOUNT_ID_REDACTED:volume/*"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestTag/Project": "finance-tracker"
+        }
+      }
+    },
+    {
+      "Sid": "EC2RunInstancesNetworkInterface",
+      "Effect": "Allow",
+      "Action": "ec2:RunInstances",
+      "Resource": "arn:aws:ec2:ap-south-1:AWS_ACCOUNT_ID_REDACTED:network-interface/*"
+    },
+    {
+      "Sid": "EC2RunInstancesSubnetAndSecurityGroup",
+      "Effect": "Allow",
+      "Action": "ec2:RunInstances",
+      "Resource": [
+        "arn:aws:ec2:ap-south-1:AWS_ACCOUNT_ID_REDACTED:subnet/*",
+        "arn:aws:ec2:ap-south-1:AWS_ACCOUNT_ID_REDACTED:security-group/*"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "aws:ResourceTag/Project": "finance-tracker"
+        }
+      }
+    },
+    {
+      "Sid": "EC2RunInstancesApprovedAmazonLinuxAMI",
+      "Effect": "Allow",
+      "Action": "ec2:RunInstances",
+      "Resource": "arn:aws:ec2:ap-south-1::image/ami-00531e78dd10fb3be"
+    },
+    {
+      "Sid": "EC2CreateVpcAndNetworking",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:CreateVpc",
+        "ec2:CreateSubnet",
+        "ec2:CreateInternetGateway",
+        "ec2:CreateRouteTable",
+        "ec2:CreateSecurityGroup"
+      ],
+      "Resource": "arn:aws:ec2:ap-south-1:AWS_ACCOUNT_ID_REDACTED:*/*",
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestTag/Project": "finance-tracker"
+        }
+      }
+    },
+    {
+      "Sid": "EC2TagOnCreateOnly",
+      "Effect": "Allow",
+      "Action": "ec2:CreateTags",
+      "Resource": "arn:aws:ec2:ap-south-1:AWS_ACCOUNT_ID_REDACTED:*/*",
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestTag/Project": "finance-tracker",
+          "ec2:CreateAction": [
+            "RunInstances",
+            "CreateVpc",
+            "CreateSubnet",
+            "CreateInternetGateway",
+            "CreateRouteTable",
+            "CreateSecurityGroup",
+            "AllocateAddress"
+          ]
+        },
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "Name",
+            "Project",
+            "Environment",
+            "Component",
+            "ManagedBy",
+            "Tier"
+          ]
+        }
+      }
+    },
+    {
+      "Sid": "EC2DirectTagExistingProjectResources",
+      "Effect": "Allow",
+      "Action": "ec2:CreateTags",
+      "Resource": "arn:aws:ec2:ap-south-1:AWS_ACCOUNT_ID_REDACTED:*/*",
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestTag/Project": "finance-tracker",
+          "aws:ResourceTag/Project": "finance-tracker"
+        },
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "Name",
+            "Project",
+            "Environment",
+            "Component",
+            "ManagedBy",
+            "Tier"
+          ]
+        }
+      }
+    },
+    {
+      "Sid": "EC2DeleteTagsExistingProjectResources",
+      "Effect": "Allow",
+      "Action": "ec2:DeleteTags",
+      "Resource": "arn:aws:ec2:ap-south-1:AWS_ACCOUNT_ID_REDACTED:*/*",
+      "Condition": {
+        "StringEquals": {
+          "aws:ResourceTag/Project": "finance-tracker"
+        },
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "Name",
+            "Project",
+            "Environment",
+            "Component",
+            "ManagedBy",
+            "Tier"
+          ]
+        }
+      }
+    },
+    {
+      "Sid": "EC2ManageProjectResources",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:StartInstances",
+        "ec2:StopInstances",
+        "ec2:RebootInstances",
+        "ec2:TerminateInstances",
+        "ec2:ModifyInstanceAttribute",
+        "ec2:DeleteVpc",
+        "ec2:DeleteSubnet",
+        "ec2:ModifySubnetAttribute",
+        "ec2:DeleteInternetGateway",
+        "ec2:AttachInternetGateway",
+        "ec2:DetachInternetGateway",
+        "ec2:DeleteRouteTable",
+        "ec2:CreateRoute",
+        "ec2:DeleteRoute",
+        "ec2:AssociateRouteTable",
+        "ec2:DisassociateRouteTable",
+        "ec2:DeleteSecurityGroup",
+        "ec2:AuthorizeSecurityGroupIngress",
+        "ec2:AuthorizeSecurityGroupEgress",
+        "ec2:RevokeSecurityGroupIngress",
+        "ec2:RevokeSecurityGroupEgress",
+        "ec2:ModifyVpcAttribute"
+      ],
+      "Resource": "arn:aws:ec2:ap-south-1:AWS_ACCOUNT_ID_REDACTED:*/*",
+      "Condition": {
+        "StringEquals": {
+          "aws:ResourceTag/Project": "finance-tracker"
+        }
+      }
+    },
+    {
+      "Sid": "EC2AllocateProjectElasticIP",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:AllocateAddress"
+      ],
+      "Resource": "arn:aws:ec2:ap-south-1:AWS_ACCOUNT_ID_REDACTED:elastic-ip/*",
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestTag/Project": "finance-tracker"
+        },
+        "ForAllValues:StringEquals": {
+          "aws:TagKeys": [
+            "Name",
+            "Project",
+            "Environment",
+            "Component",
+            "ManagedBy"
+          ]
+        }
+      }
+    },
+    {
+      "Sid": "EC2ReleaseProjectElasticIP",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:ReleaseAddress"
+      ],
+      "Resource": "arn:aws:ec2:ap-south-1:AWS_ACCOUNT_ID_REDACTED:elastic-ip/*",
+      "Condition": {
+        "StringEquals": {
+          "aws:ResourceTag/Project": "finance-tracker"
+        }
+      }
+    },
+    {
+      "Sid": "EC2AssociateAndDisassociateProjectElasticIP",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:AssociateAddress",
+        "ec2:DisassociateAddress"
+      ],
+      "Resource": [
+        "arn:aws:ec2:ap-south-1:AWS_ACCOUNT_ID_REDACTED:elastic-ip/*",
+        "arn:aws:ec2:ap-south-1:AWS_ACCOUNT_ID_REDACTED:instance/*",
+        "arn:aws:ec2:ap-south-1:AWS_ACCOUNT_ID_REDACTED:network-interface/*"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "aws:ResourceTag/Project": "finance-tracker"
+        }
+      }
+    }
+  ]
+}

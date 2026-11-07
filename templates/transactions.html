@@ -35,6 +35,33 @@
     </div>
     {% endif %}
 
+    <!-- Export Monthly Report (Amazon S3) -->
+    <div class="glass-effect rounded-2xl p-6 shadow-lg">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                    <i class="fas fa-cloud-upload-alt text-blue-600"></i>
+                    Export Monthly Report
+                </h2>
+                <p class="text-sm text-gray-600">
+                    Generate a monthly transaction CSV archive and store it securely in Amazon S3.
+                </p>
+            </div>
+            <form action="{{ url_for('main.export_monthly_report') }}" method="POST" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="flex items-center gap-2">
+                    <label for="reportMonth" class="text-sm font-medium text-gray-700 whitespace-nowrap">Month:</label>
+                    <input type="month" id="reportMonth" name="month" value="{{ current_month }}" required
+                           class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm">
+                </div>
+                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center justify-center gap-2 text-sm font-medium shadow-sm">
+                    <i class="fas fa-file-csv"></i>
+                    <span>Export to S3</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
     <!-- Filters and Search -->
     <div class="glass-effect rounded-2xl p-6 shadow-lg">
         <div class="flex flex-col md:flex-row gap-4 mb-6">

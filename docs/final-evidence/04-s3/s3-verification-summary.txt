@@ -1,0 +1,26 @@
+AMAZON S3 STORAGE & SECURITY VERIFICATION
+=========================================
+Bucket Name: finance-tracker-reports-S3_BUCKET_REDACTED
+Region: ap-south-1
+
+PUBLIC ACCESS BLOCK CONFIGURATION:
+BlockPublicAcls: True
+IgnorePublicAcls: True
+BlockPublicPolicy: True
+RestrictPublicBuckets: True
+Result: ALL PUBLIC ACCESS BLOCKED (100% Private)
+
+DEFAULT SERVER-SIDE ENCRYPTION:
+Algorithm: AES256
+Status: Active on all objects
+
+CONFIRMED ARTIFACTS & REPORTS:
+1. Deployment Release Archive:
+   Key: monthly-reports/_deployment-stage8/finance-tracker-release.tar.gz
+   Size: 108,895 bytes
+   SHA-256: efa0accf3d86b222dd22c73ced58eb09a3f4f8cc62f3f8196e3585eab2e8e564
+2. Finance Tracker Demonstration Monthly Report:
+   Key: monthly-reports/user-1/2026-11/report-d34b7611bcc94060b843c791c761d5f5.csv
+   Size: 218 bytes
+   SSE: AES256
+   Access: Generated via pre-signed URL (900s TTL) by authenticated Flask session

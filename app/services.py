@@ -2,6 +2,34 @@ import pandas as pd
 import yfinance as yf
 from datetime import datetime
 import hashlib
+import math
+
+
+# ------------------------------------------------------------------
+# Numeric validation
+# ------------------------------------------------------------------
+def _safe_float(value, field_name='value'):
+    """
+    Convert *value* to float and reject IEEE special values.
+
+    Raises ValueError for inf, -inf, nan, and numbers outside the safe
+    range for a database Float column (~1e15 is a practical ceiling for
+    financial amounts).
+    """
+    try:
+        f = float(value)
+    except (TypeError, ValueError):
+        raise ValueError(f"Invalid numeric value for {field_name!r}: {value!r}")
+
+    if math.isnan(f):
+        raise ValueError(f"NaN is not a valid {field_name}")
+    if math.isinf(f):
+        raise ValueError(f"Infinite value is not a valid {field_name}")
+    if abs(f) > 1e15:
+        raise ValueError(f"{field_name} is outside the acceptable range: {f}")
+
+    return f
+
 
 # FINGERPRINT AND CATEGORY FUNCTIONS
 def generate_fingerprint(user_id, date_str, description, amount):
@@ -222,9 +250,9 @@ def process_transactions_csv(df, user_id):
                     'Unknown'
                 ).strip()
                 
-                amount = float(
-                    row.get('amount') or
-                    row.get('Amount') or 0
+                amount = _safe_float(
+                    row.get('amount') if row.get('amount') is not None else (row.get('Amount') if row.get('Amount') is not None else 0),
+                    'amount'
                 )
                 
                 raw_category = str(
@@ -330,10 +358,10 @@ def process_net_worth_csv(df, user_id):
     from app import db
     
     for _, row in df.iterrows():
-        date_str = row.get('date') or row.get('Date')
-        assets = float(row.get('assets') or row.get('Assets') or 0)
-        liabilities = float(row.get('liabilities') or row.get('Liabilities') or 0)
-        net_worth = float(row.get('netWorth') or row.get('net_worth') or row.get('Net Worth') or 0)
+        date_str = str(row.get('date') or row.get('Date') or '').strip()
+        assets = _safe_float(row.get('assets') if row.get('assets') is not None else (row.get('Assets') if row.get('Assets') is not None else 0), 'assets')
+        liabilities = _safe_float(row.get('liabilities') if row.get('liabilities') is not None else (row.get('Liabilities') if row.get('Liabilities') is not None else 0), 'liabilities')
+        net_worth = _safe_float(row.get('netWorth') if row.get('netWorth') is not None else (row.get('net_worth') if row.get('net_worth') is not None else (row.get('Net Worth') if row.get('Net Worth') is not None else 0)), 'net_worth')
         
         if net_worth and not assets and not liabilities:
             assets = net_worth if net_worth > 0 else 0
@@ -357,11 +385,12 @@ def process_portfolio_csv(df, user_id):
     from app import db
     
     for _, row in df.iterrows():
-        symbol = row.get('symbol') or row.get('Symbol')
-        name = row.get('name') or row.get('Name') or symbol
-        shares = float(row.get('shares') or row.get('Shares') or 0)
-        current_price = float(row.get('currentPrice') or row.get('Current Price') or 0)
-        cost_basis = float(row.get('costBasis') or row.get('Cost Basis') or current_price)
+        symbol = str(row.get('symbol') or row.get('Symbol') or '').strip()
+        name = str(row.get('name') or row.get('Name') or symbol).strip()
+        shares = _safe_float(row.get('shares') if row.get('shares') is not None else (row.get('Shares') if row.get('Shares') is not None else 0), 'shares')
+        current_price = _safe_float(row.get('currentPrice') if row.get('currentPrice') is not None else (row.get('Current Price') if row.get('Current Price') is not None else 0), 'current_price')
+        cost_basis_raw = row.get('costBasis') if row.get('costBasis') is not None else row.get('Cost Basis')
+        cost_basis = _safe_float(cost_basis_raw, 'cost_basis') if cost_basis_raw is not None else current_price
         
         total_value = shares * current_price
         gain_loss = total_value - (shares * cost_basis)

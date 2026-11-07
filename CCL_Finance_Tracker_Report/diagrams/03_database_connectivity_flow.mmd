@@ -1,0 +1,34 @@
+%% Figure 3: Database Connectivity and Network Isolation Architecture
+flowchart LR
+    subgraph PublicSubnet["Public Subnet (10.0.1.0/24)"]
+        direction TB
+        AppContainer["Docker: finance-tracker-app<br/>Flask SQLAlchemy Engine<br/>URL.create(mysql+pymysql)"]
+        AppSG["Security Group: app-sg<br/>Inbound: 80 from 0.0.0.0/0<br/>Outbound: 3306 to db-sg"]
+    end
+
+    subgraph VPCNetwork["Amazon VPC Internal Routing (10.0.0.0/16)"]
+        direction TB
+        PrivateRouting["VPC Local Route Table<br/>Traffic strictly internal<br/>Zero Internet Gateway Traversal"]
+    end
+
+    subgraph PrivateSubnets["Private Database Tier (No Public Access)"]
+        direction TB
+        DBSG["Security Group: db-sg<br/>Inbound: TCP 3306 strictly from app-sg<br/>Outbound: None (Drop all)"]
+        
+        subgraph SubnetGroup["Private DB Subnet Group across 2 AZs"]
+            RDSA["RDS MySQL Primary Instance<br/>finance-tracker-mysql (db.t3.micro)<br/>Subnet A (10.0.10.0/24)"]
+            SubnetB["Standby Subnet Placement<br/>Subnet B (10.0.11.0/24)"]
+        end
+    end
+
+    AppContainer -->|"1. Resolve DB Host via VPC DNS"| AppSG
+    AppSG -->|"2. TCP Port 3306 Connection"| PrivateRouting
+    PrivateRouting -->|"3. Private VPC CIDR Packet"| DBSG
+    DBSG -->|"4. Statefully Verify Source: app-sg"| RDSA
+
+    classDef public fill:#e1f5fe,stroke:#0288d1,stroke-width:2px;
+    classDef private fill:#fff3e0,stroke:#f57c00,stroke-width:2px;
+    classDef network fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px;
+    class PublicSubnet public;
+    class PrivateSubnets private;
+    class VPCNetwork network;

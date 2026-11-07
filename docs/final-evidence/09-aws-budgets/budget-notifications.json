@@ -1,0 +1,58 @@
+[
+  {
+    "Notification": {
+      "NotificationType": "ACTUAL",
+      "ComparisonOperator": "GREATER_THAN",
+      "Threshold": 100.0,
+      "NotificationState": "OK"
+    },
+    "Subscribers": [
+      {
+        "SubscriptionType": "SNS",
+        "Address": "arn:aws:sns:ap-south-1:AWS_ACCOUNT_ID_REDACTED:finance-tracker-alerts"
+      }
+    ]
+  },
+  {
+    "Notification": {
+      "NotificationType": "ACTUAL",
+      "ComparisonOperator": "GREATER_THAN",
+      "Threshold": 50.0,
+      "NotificationState": "OK"
+    },
+    "Subscribers": [
+      {
+        "SubscriptionType": "SNS",
+        "Address": "arn:aws:sns:ap-south-1:AWS_ACCOUNT_ID_REDACTED:finance-tracker-alerts"
+      }
+    ]
+  },
+  {
+    "Notification": {
+      "NotificationType": "ACTUAL",
+      "ComparisonOperator": "GREATER_THAN",
+      "Threshold": 80.0,
+      "NotificationState": "OK"
+    },
+    "Subscribers": [
+      {
+        "SubscriptionType": "SNS",
+        "Address": "arn:aws:sns:ap-south-1:AWS_ACCOUNT_ID_REDACTED:finance-tracker-alerts"
+      }
+    ]
+  },
+  {
+    "Notification": {
+      "NotificationType": "FORECASTED",
+      "ComparisonOperator": "GREATER_THAN",
+      "Threshold": 100.0,
+      "NotificationState": "OK"
+    },
+    "Subscribers": [
+      {
+        "SubscriptionType": "SNS",
+        "Address": "arn:aws:sns:ap-south-1:AWS_ACCOUNT_ID_REDACTED:finance-tracker-alerts"
+      }
+    ]
+  }
+]

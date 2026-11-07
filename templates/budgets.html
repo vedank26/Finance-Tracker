@@ -13,25 +13,25 @@
         <div class="glass-effect rounded-2xl p-6 shadow-lg mb-8">
             <h2 class="text-xl font-bold text-gray-800 mb-4">Time Period</h2>
             <div class="flex flex-wrap gap-2">
-                <a href="{{ url_for('main.budgets') }}?period=all" 
+                <a href="{{ url_for('main.budgets') }}?period=month"
                    class="px-4 py-2 rounded-lg font-semibold transition-colors text-sm
-                   {% if current_period == 'all' or not current_period %}bg-blue-500 text-white{% else %}bg-gray-200 text-gray-700 hover:bg-gray-300{% endif %}">
-                    All Time
+                   {% if current_period == 'month' or not current_period %}bg-blue-500 text-white{% else %}bg-gray-200 text-gray-700 hover:bg-gray-300{% endif %}">
+                    This Month
                 </a>
                 <a href="{{ url_for('main.budgets') }}?period=30days" 
                    class="px-4 py-2 rounded-lg font-semibold transition-colors text-sm
                    {% if current_period == '30days' %}bg-blue-500 text-white{% else %}bg-gray-200 text-gray-700 hover:bg-gray-300{% endif %}">
                     Last 30 Days
                 </a>
-                <a href="{{ url_for('main.budgets') }}?period=month" 
-                   class="px-4 py-2 rounded-lg font-semibold transition-colors text-sm
-                   {% if current_period == 'month' %}bg-blue-500 text-white{% else %}bg-gray-200 text-gray-700 hover:bg-gray-300{% endif %}">
-                    This Month
-                </a>
                 <a href="{{ url_for('main.budgets') }}?period=3months" 
                    class="px-4 py-2 rounded-lg font-semibold transition-colors text-sm
                    {% if current_period == '3months' %}bg-blue-500 text-white{% else %}bg-gray-200 text-gray-700 hover:bg-gray-300{% endif %}">
                     Last 3 Months
+                </a>
+                <a href="{{ url_for('main.budgets') }}?period=all"
+                   class="px-4 py-2 rounded-lg font-semibold transition-colors text-sm
+                   {% if current_period == 'all' %}bg-blue-500 text-white{% else %}bg-gray-200 text-gray-700 hover:bg-gray-300{% endif %}">
+                    All Time
                 </a>
             </div>
         </div>
@@ -40,7 +40,8 @@
         {% if remaining_categories %}
         <div class="glass-effect rounded-2xl p-6 shadow-lg mb-8">
             <h2 class="text-xl font-bold text-gray-800 mb-4">Add New Budget</h2>
-            <form method="POST" action="{{ url_for('main.budgets') }}">>
+            <form method="POST" action="{{ url_for('main.budgets') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label for="category" class="block text-sm font-medium text-gray-700 mb-2">Category</label>
@@ -96,6 +97,7 @@
                             </div>
                             <form method="POST" action="{{ url_for('main.delete_budget', budget_id=budget.id) }}" 
                                   onsubmit="return confirm('Are you sure you want to delete this budget?')">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                 <button type="submit" 
                                         class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm transition-colors">
                                     Delete
@@ -105,7 +107,8 @@
                     </div>
                     
                     <!-- Update Budget Form -->
-                    <form method="POST" action="{{ url_for('main.budgets') }}"> class="mb-2">
+                    <form method="POST" action="{{ url_for('main.budgets') }}" class="mb-2">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <input type="hidden" name="category" value="{{ budget.category }}">
                         <div class="flex items-center space-x-2">
                             <label class="text-sm text-gray-600">Update Limit:</label>

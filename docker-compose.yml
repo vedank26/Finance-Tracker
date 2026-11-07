@@ -1,0 +1,69 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: finance-tracker-db
+    restart: unless-stopped
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-financedb}
+      MYSQL_USER: ${MYSQL_USER:-financeuser}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p$${MYSQL_ROOT_PASSWORD} || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - finance-network
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: finance-tracker-app
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SECRET_KEY: ${SECRET_KEY}
+      DB_HOST: ${DB_HOST:-db}
+      DB_PORT: ${DB_PORT:-3306}
+      DB_USER: ${DB_USER:-${MYSQL_USER:-financeuser}}
+      DB_PASSWORD: ${DB_PASSWORD:-${MYSQL_PASSWORD}}
+      DB_NAME: ${DB_NAME:-${MYSQL_DATABASE:-financedb}}
+      DB_DRIVER: ${DB_DRIVER:-mysql+pymysql}
+      DATABASE_URL: ${DATABASE_URL:-}
+      FLASK_ENV: ${FLASK_ENV:-development}
+      FLASK_DEBUG: ${FLASK_DEBUG:-0}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      APPLICATION_URL: ${APPLICATION_URL:-http://localhost:5000}
+      MAIL_SERVER: ${MAIL_SERVER:-}
+      MAIL_PORT: ${MAIL_PORT:-587}
+      MAIL_USERNAME: ${MAIL_USERNAME:-}
+      MAIL_PASSWORD: ${MAIL_PASSWORD:-}
+      MAIL_DEFAULT_SENDER: ${MAIL_DEFAULT_SENDER:-}
+      MAIL_USE_TLS: ${MAIL_USE_TLS:-1}
+      S3_REPORT_BUCKET: ${S3_REPORT_BUCKET:-}
+      AWS_REGION: ${AWS_REGION:-us-east-1}
+    ports:
+      - "${HOST_PORT:-5000}:5000"
+    volumes:
+      - uploads_data:/app/uploads
+    networks:
+      - finance-network
+
+volumes:
+  mysql_data:
+    name: finance-tracker-mysql-data
+  uploads_data:
+    name: finance-tracker-uploads-data
+
+networks:
+  finance-network:
+    name: finance-tracker-network
+    driver: bridge

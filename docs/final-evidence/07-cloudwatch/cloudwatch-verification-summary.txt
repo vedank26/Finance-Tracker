@@ -1,0 +1,18 @@
+AMAZON CLOUDWATCH LOGS & ALARMS VERIFICATION
+============================================
+LOG GROUP:
+Name: /finance-tracker/app
+Retention: 7 days
+Stored Bytes: 0
+Log Streams: finance-tracker-app
+Purpose: Captures Gunicorn access and application logs streamed from EC2 container.
+
+METRIC ALARM:
+Alarm Name: finance-tracker-ec2-high-cpu
+Metric: CPUUtilization
+Dimensions: InstanceId = EC2_INSTANCE_ID_REDACTED
+Threshold: > 80.0%
+Evaluation Periods: 2 periods of 300 seconds (10 minutes total)
+Statistic: Average
+State: OK
+Alarm Action: arn:aws:sns:ap-south-1:AWS_ACCOUNT_ID_REDACTED:finance-tracker-alerts

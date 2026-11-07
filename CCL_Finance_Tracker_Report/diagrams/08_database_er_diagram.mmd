@@ -1,0 +1,59 @@
+%% Figure 8: Finance Tracker Relational Database Schema (ER Diagram)
+erDiagram
+    user {
+        int id PK "Primary Key (Auto-Increment)"
+        varchar username UK "Unique Username (80)"
+        varchar email UK "Unique Email Address (120)"
+        varchar password_hash "PBKDF2/SHA256 Hash (200)"
+        datetime created_at "Account Creation Timestamp"
+        float monthly_goal "Optional Monthly Savings Goal"
+        varchar reset_token "32-Hex Character Password Reset Token"
+        int reset_token_expiry "UNIX Epoch Expiry Timestamp"
+    }
+
+    transaction {
+        int id PK "Primary Key (Auto-Increment)"
+        int user_id FK "Foreign Key -> user.id"
+        date date "Transaction Date"
+        varchar description "Transaction Description (200)"
+        float amount "Transaction Monetary Value"
+        varchar category "Category Name (50)"
+        varchar type "Enum: income | expense (10)"
+        varchar fingerprint "Indexed MD5 Hash (32) for Deduplication"
+        datetime created_at "Ingestion Timestamp"
+    }
+
+    budget {
+        int id PK "Primary Key (Auto-Increment)"
+        int user_id FK "Foreign Key -> user.id"
+        varchar category "Budgeted Category Name (50)"
+        float monthly_limit "Monthly Dollar Ceiling"
+        datetime created_at "Budget Creation Timestamp"
+    }
+
+    net_worth {
+        int id PK "Primary Key (Auto-Increment)"
+        int user_id FK "Foreign Key -> user.id"
+        date date "Snapshot Date"
+        float assets "Total Asset Value"
+        float liabilities "Total Liabilities / Debts"
+        float net_worth "Calculated: assets - liabilities"
+    }
+
+    investment {
+        int id PK "Primary Key (Auto-Increment)"
+        int user_id FK "Foreign Key -> user.id"
+        varchar symbol "Stock / Asset Ticker Symbol (20)"
+        varchar name "Full Holding Name (100)"
+        float shares "Number of Shares Held"
+        float current_price "Current Market Unit Price"
+        float cost_basis "Total Purchase Cost Basis"
+        float total_value "Calculated: shares * current_price"
+        float gain_loss "Calculated: total_value - cost_basis"
+        float gain_loss_percent "Calculated Percentage Return"
+    }
+
+    user ||--o{ transaction : "owns (1:N)"
+    user ||--o{ budget : "defines (1:N)"
+    user ||--o{ net_worth : "records (1:N)"
+    user ||--o{ investment : "manages (1:N)"
