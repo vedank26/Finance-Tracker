@@ -41,10 +41,6 @@ ehthumbs.db
 logs/
 
 # Test / debug / scaffold / temporary scripts
-clean_cache.py
-create_test_data.py
-update_db.py
-sample_data.py
 verify_*.py
 audit_*.py
 fix_*.py

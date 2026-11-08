@@ -39,7 +39,8 @@ docs/final-evidence/
 ├── 05-iam/                          # Identity & Least-Privilege Authorization
 │   ├── ec2-role.json                # IAM Role trust policy granting sts:AssumeRole to EC2
 │   ├── ec2-inline-policies.json     # Scoped inline policies for S3, SSM, and CloudWatch
-│   └── iam-verification-summary.txt # Least-privilege verification (no wildcard permissions)
+│   ├── iam-verification-summary.txt # Least-privilege verification (no wildcard permissions)
+│   └── deployer-policy-backups/     # Historical deployer IAM policy backups (3 JSON policies)
 │
 ├── 06-ssm-parameter-store/          # Centralized Secrets & Runtime Configuration
 │   ├── parameters-description.json  # Catalog of managed parameters under /finance-tracker/*
@@ -94,8 +95,8 @@ When presenting or reviewing the AWS implementation, the following genuine conso
 - **What it Proves:** Proves all 4 S3 Block Public Access settings are active, default SSE-S3 AES-256 encryption is enforced, and reports are private. Confirms time-limited pre-signed URLs (15 minutes) and 30-day automatic object expiration lifecycle rules.
 
 ### 5. IAM Least-Privilege Role & Policy Architecture
-- **Evidence Artifacts:** `05-iam/ec2-role.json`, `05-iam/ec2-inline-policies.json`
-- **What it Proves:** Demonstrates role delegation via `finance-tracker-ec2-role`. Confirms three scoped inline policies for S3, SSM, and CloudWatch Logs with zero wildcard resource permissions, combined with `AmazonSSMManagedInstanceCore` for secure Session Manager administration.
+- **Evidence Artifacts:** `05-iam/ec2-role.json`, `05-iam/ec2-inline-policies.json`, `05-iam/deployer-policy-backups/`
+- **What it Proves:** Demonstrates role delegation via `finance-tracker-ec2-role`. Confirms three scoped inline policies for S3, SSM, and CloudWatch Logs with zero wildcard resource permissions, combined with `AmazonSSMManagedInstanceCore` for secure Session Manager administration. Historical deployer user policies are preserved in `deployer-policy-backups/`.
 
 ### 6. AWS Systems Manager Parameter Store
 - **Evidence Artifacts:** `06-ssm-parameter-store/parameters-description.json`, `06-ssm-parameter-store/ssm-verification-summary.txt`

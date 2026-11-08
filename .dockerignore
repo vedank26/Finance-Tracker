@@ -76,6 +76,7 @@ docker-compose*
 .dockerignore
 
 # Temporary / testing scripts
+scripts/
 clean_cache.py
 create_test_data.py
 update_db.py

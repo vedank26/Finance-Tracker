@@ -5,8 +5,7 @@
 [![Docker](https://img.shields.io/badge/Docker-Containerized-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
 [![Python](https://img.shields.io/badge/Python-3.11-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![Flask](https://img.shields.io/badge/Flask-3.0-000000?logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
-[![MySQL](https://img.shields.io/badge/MySQL-8.0%20(RDS)-4479A1?logo=mysql&logoColor=white)](https://www.mysql.com/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![MySQL](https://img.shields.io/badge/MySQL-8.0%20%28RDS%29-4479A1?logo=mysql&logoColor=white)](https://www.mysql.com/)
 
 A production-grade, multi-tier personal finance tracking and financial intelligence cloud platform deployed on **Amazon Web Services (AWS)** using **Docker containerization** and **HashiCorp Terraform Infrastructure as Code (IaC)**.
 
@@ -23,7 +22,7 @@ A production-grade, multi-tier personal finance tracking and financial intellige
    - [System Architecture Reference](#system-architecture-reference)
 6. [AWS Services Implementation Breakdown (9 Services)](#6-aws-services-implementation-breakdown)
 7. [Docker Containerization Implementation](#7-docker-containerization-implementation)
-8. [Terraform Infrastructure as Code (40 Resources)](#8-terraform-infrastructure-as-code)
+8. [Terraform Infrastructure as Code (44 Managed Resources)](#8-terraform-infrastructure-as-code-44-managed-resources)
 9. [Application Architecture & End-to-End Data Flow](#9-application-architecture--end-to-end-data-flow)
 10. [Defense-in-Depth Security Implementation](#10-defense-in-depth-security-implementation)
 11. [Installation & Local Setup Guide](#11-installation--local-setup-guide)
@@ -153,7 +152,17 @@ flowchart TD
 ### System Architecture Reference
 The production architecture is captured in the high-resolution reference diagram below:
 
-![AWS Finance Tracker Architecture](CCL_Finance_Tracker_Report/aws_finance_tracker_architecture.jpg)
+![AWS Finance Tracker Architecture](docs/architecture/finance-tracker-architecture.png)
+
+*Key Architectural Specifications:*
+- **Two-Module Terraform Architecture:** Exactly **44 managed resources** across two independent modules (**40 resources** in `terraform/app` and **4 resources** in `terraform/budget`) with separate state files.
+- **Air-Gapped Multi-Tier VPC:** Custom Amazon VPC (`10.0.0.0/16`) in `ap-south-1` (Mumbai) segregating public compute (`10.0.1.0/24`) from isolated private database subnets across two AZs (`10.0.10.0/24`, `10.0.11.0/24`).
+- **Compute & Container Isolation:** EC2 `t3.micro` host port 80 mapped to Docker container port 5000 running Gunicorn (2 workers, 4 threads) as non-root `appuser` (UID 1000); SSH port 22 completely closed.
+- **Relational Data Tier:** Amazon RDS MySQL 8.0 (`db.t3.micro`) private connectivity restricted to `app-sg` on port 3306; KMS storage encryption at rest (`alias/aws/rds`).
+- **Encrypted Report Storage:** Amazon S3 bucket with SSE-S3 AES-256, 4x Block Public Access enabled, 30-day lifecycle expiration, and 15-minute presigned download URLs.
+- **Centralized Secrets:** AWS Systems Manager Parameter Store managing 14 parameters (8 Terraform app parameters + 6 SMTP parameters) with AWS KMS `SecureString` encryption for sensitive credentials.
+- **Identity & Governance:** EC2 Instance Profile (`finance-tracker-ec2-role`) providing temporary credentials through Instance Metadata Service (IMDSv2); no static access keys; university IAM permissions boundary applied.
+- **Observability & Notifications:** CloudWatch container log aggregation (`/finance-tracker/app`, 7-day retention), CPU alarm (>80%), and AWS Budgets $20.00 monthly cost guardrail with 4 alerting thresholds routed to Amazon SNS topic `finance-tracker-alerts`.
 
 ---
 
@@ -225,7 +234,7 @@ The application is containerized to guarantee identical execution across develop
 
 ---
 
-## 8. Terraform Infrastructure as Code
+## 8. Terraform Infrastructure as Code (44 Managed Resources)
 
 The entire cloud infrastructure is codified using declarative HashiCorp Terraform modules located in the `terraform/` directory:
 
@@ -255,7 +264,7 @@ terraform/
     └── versions.tf                          # Provider requirements
 ```
 
-*Total Managed Resources:* Exactly **40 resources** in `terraform/app` and **4 resources** in `terraform/budget`. State files and binary execution plans (`*.tfplan`) are strictly excluded from version control to prevent credential exposure.
+*Total Managed Resources:* Exactly **44 managed resources** across two independent modules (**40 resources** in `terraform/app` and **4 resources** in `terraform/budget`). State files and binary execution plans (`*.tfplan`) are strictly excluded from version control to prevent credential exposure.
 
 ---
 
@@ -351,6 +360,11 @@ python app.py
 ```
 Open your browser and navigate to `http://127.0.0.1:5000/`.
 
+### Development & Demonstration Utilities
+- **Generate Demonstration Data:** Run `python scripts/demo/sample_data.py` to create sample CSV datasets (`sample_transactions.csv`, `sample_net_worth.csv`, `sample_portfolio.csv`) formatted for instant upload.
+- **Local Database Seeding:** Run `python scripts/dev/create_test_data.py` to seed a local SQLite test user (`testuser`) and calculate budget allocations.
+- **Python Cache Cleanup:** Run `python scripts/dev/clean_cache.py` to purge all local `__pycache__` artifacts across the project tree.
+
 ---
 
 ## 12. AWS Deployment Guide
@@ -392,7 +406,7 @@ Comprehensive technical verification artifacts proving the live AWS deployment a
 - [`docs/final-evidence/02-vpc/`](docs/final-evidence/02-vpc/): Subnets, route tables, and security group rules.
 - [`docs/final-evidence/03-rds-mysql/`](docs/final-evidence/03-rds-mysql/): MySQL instance specs and KMS storage encryption proof.
 - [`docs/final-evidence/04-s3/`](docs/final-evidence/04-s3/): S3 Block Public Access, SSE-S3 encryption, and demonstration report list.
-- [`docs/final-evidence/05-iam/`](docs/final-evidence/05-iam/): EC2 IAM role trust policies and scoped inline policies.
+- [`docs/final-evidence/05-iam/`](docs/final-evidence/05-iam/): EC2 IAM role trust policies, scoped inline policies, and historical deployer policy backups.
 - [`docs/final-evidence/06-ssm-parameter-store/`](docs/final-evidence/06-ssm-parameter-store/): Catalog of 14 parameters and KMS `SecureString` verification.
 - [`docs/final-evidence/07-cloudwatch/`](docs/final-evidence/07-cloudwatch/): Log group configuration and metric alarm rules.
 - [`docs/final-evidence/08-sns/`](docs/final-evidence/08-sns/): SNS alerting topic and verified email subscription.
@@ -478,5 +492,3 @@ A visual walkthrough of the Finance Tracker cloud platform and application featu
 - **Author:** Vedank ([@vedank26](https://github.com/vedank26))
 - **Course:** Cloud Computing Laboratory (CCL) Mini-Project
 - **Academic Year:** 2026
-
-*Licensed under the [MIT License](LICENSE).*

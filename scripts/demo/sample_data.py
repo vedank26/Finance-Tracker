@@ -5,15 +5,15 @@ import os
 
 def generate_sample_data():
     """Generate sample financial data for demonstration"""
-    
+
     # Sample transactions
     transactions = []
     categories = ['Food & Dining', 'Transportation', 'Housing', 'Shopping', 'Entertainment', 'Healthcare']
-    
+
     for i in range(100):
         date = datetime.now() - timedelta(days=random.randint(1, 90))
         is_income = random.random() < 0.2  # 20% chance of income
-        
+
         if is_income:
             amount = random.randint(10000, 50000)
             description = random.choice(['Salary', 'Freelance Payment', 'Investment Return', 'Bonus'])
@@ -32,7 +32,7 @@ def generate_sample_data():
             }
             description = random.choice(descriptions[category])
             trans_type = 'expense'
-        
+
         transactions.append({
             'date': date.strftime('%Y-%m-%d'),
             'description': description,
@@ -40,7 +40,7 @@ def generate_sample_data():
             'category': category,
             'type': trans_type
         })
-    
+
     # Sample net worth data
     net_worth_data = []
     base_net_worth = 500000
@@ -48,14 +48,14 @@ def generate_sample_data():
         date = datetime.now() - timedelta(days=30*(11-i))
         growth = random.randint(5000, 20000)
         base_net_worth += growth
-        
+
         net_worth_data.append({
             'date': date.strftime('%Y-%m-%d'),
             'assets': base_net_worth + random.randint(100000, 200000),
             'liabilities': random.randint(50000, 100000),
             'net_worth': base_net_worth
         })
-    
+
     # Sample portfolio data
     portfolio_data = [
         {'symbol': 'AAPL', 'name': 'Apple Inc.', 'shares': 10, 'current_price': 150, 'cost_basis': 130},
@@ -63,28 +63,40 @@ def generate_sample_data():
         {'symbol': 'TSLA', 'name': 'Tesla Inc.', 'shares': 20, 'current_price': 200, 'cost_basis': 180},
         {'symbol': 'MSFT', 'name': 'Microsoft Corp.', 'shares': 8, 'current_price': 300, 'cost_basis': 280}
     ]
-    
+
     return transactions, net_worth_data, portfolio_data
 
-def create_sample_files():
-    """Save sample data to CSV files"""
+from pathlib import Path
+
+
+def create_sample_files(output_dir=None):
+    """Save sample data to CSV files in the project root directory"""
+    if output_dir is None:
+        output_dir = Path(__file__).resolve().parent.parent.parent
+    else:
+        output_dir = Path(output_dir)
+
     transactions, net_worth, portfolio = generate_sample_data()
-    
-    pd.DataFrame(transactions).to_csv('sample_transactions.csv', index=False)
-    pd.DataFrame(net_worth).to_csv('sample_net_worth.csv', index=False)
-    pd.DataFrame(portfolio).to_csv('sample_portfolio.csv', index=False)
-    
+
+    trans_file = str(output_dir / 'sample_transactions.csv')
+    nw_file = str(output_dir / 'sample_net_worth.csv')
+    pf_file = str(output_dir / 'sample_portfolio.csv')
+
+    pd.DataFrame(transactions).to_csv(trans_file, index=False)
+    pd.DataFrame(net_worth).to_csv(nw_file, index=False)
+    pd.DataFrame(portfolio).to_csv(pf_file, index=False)
+
     print("Sample files created:")
-    print("- sample_transactions.csv")
-    print("- sample_net_worth.csv") 
-    print("- sample_portfolio.csv")
+    print(f"- {trans_file}")
+    print(f"- {nw_file}")
+    print(f"- {pf_file}")
 
 def ask_user_preference():
     """Ask user whether they want to use sample data or real data"""
     print("\n" + "="*50)
     print("FINANCIAL DASHBOARD DATA SETUP")
     print("="*50)
-    
+
     while True:
         choice = input("Do you want to generate sample data? (y/n): ").lower().strip()
         if choice in ['y', 'yes']:
